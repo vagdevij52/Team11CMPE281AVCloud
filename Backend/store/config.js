@@ -50,5 +50,5 @@ connection.on('connect', function (err) {
 connection.connect();
 
 module.exports = {
-  dbconnection: new Connection(config),
+  dbconnection: connection,
 };
