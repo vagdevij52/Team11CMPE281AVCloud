@@ -71,6 +71,7 @@ module.exports={
         //return response(data, error);
         datao= data;
         console.log(datao);
+        return data;
     });
     return datao;
 },
