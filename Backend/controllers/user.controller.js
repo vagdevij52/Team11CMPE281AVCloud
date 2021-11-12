@@ -1,7 +1,9 @@
 const { json } = require('body-parser');
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
-const User = require('../models/user/user.model');
+var Promise=require('bluebird');
+
+const User = Promise.promisifyAll(require('../models/user/user.model'));
 var TYPES = require('tedious').TYPES;
 var response = require('../utils/response');
 const dbContext = require('../database/dbContext');
@@ -31,6 +33,27 @@ exports.get = (req, res) => res.json(req.locals.user.transform());
  */
 exports.loggedIn = (req, res) => res.json(req.user.transform());
 
+// exports.addUser=(req,res,next)=>{
+//   const user = {
+//     FirstName:"lakshmi",
+//     LastName:"priya",     
+//     UserRole:"user",
+//     Email:"lpriya33@gmail.com",  
+//     UserPassword:"p",
+//     UserCreditCard:"12345",
+//     UserPhone:"56543212",
+//     ProfilePicture:"abcd.jpg"
+//    };
+//    Promise.resolve(User.createuser(user)).then(function(){
+//     console.log("yes after");
+//    });
+//     //  const userdata= User.createuser(user).then(function(){
+//     //    console.log("yes after");
+//     //  });
+//      //console.log()
+//     // console.log(userdata);
+
+// };
 /**
  * Create new user
  * @public
@@ -58,24 +81,31 @@ exports.create = (req, res, next) => {
     parameters.push({ name: 'UserCreditCard', type: TYPES.NVarChar, val: user.UserCreditCard });
     parameters.push({ name: 'UserPhone', type: TYPES.NVarChar, val:user.UserPhone });
     parameters.push({ name: 'ProfilePicture', type: TYPES.NVarChar, val: user.ProfilePicture });
-    // Object.entries(employee).forEach((property)=>{
-    //     parameters.push({name:'@'+property[0]})
-    // });
-    datao=[];
+   
+   
     var query="INSERT INTO dbo.USERDETAILS(FirstName,LastName,UserRole,Email,UserPassword,UserCreditCard,UserPhone,ProfilePicture) values(@FirstName,@LastName,@UserRole,@Email,@UserPassword,@UserCreditCard,@UserPhone,@ProfilePicture);select @@identity as UserID;";
     dbContext.query(query, parameters, false,function (error, data) {
         console.log(data);
         //return response(data, error);
         datao= data;
         console.log(datao);
-        return res.json(data);
+        return res.json(response(data,error));
     });
       res.status(httpStatus.CREATED);
     
-     //return res.json(usr);
+    
   } catch (error) {
     next(User.checkDuplicateEmail(error));
   }
+};
+exports.login=(req,res,next)=>{
+  try{
+
+  }
+catch(err)
+{
+  
+}
 };
 /**
  * Replace existing user
