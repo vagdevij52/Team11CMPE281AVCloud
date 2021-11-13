@@ -6,15 +6,16 @@
  require('../config/passport');
  const ADMIN = 'admin';
  const LOGGED_USER = '_loggedUser';
+ const CAR_OWNER='carowner';
  const { ExtractJwt } = require('passport-jwt');
  const Promise=require('bluebird');
  var user={};
 const handleJWT = (req, res, next, roles) =>async (err, uer, info) => {
- //console.log(req);
-  //console.log(res);
-  console.log(roles);
+ ////console.log(req);
+  ////console.log(res);
+  //console.log(roles);
   const error = err || info;
-  console.log("here "+user);
+  //console.log(user);
   const logIn = Promise.promisify(req.logIn);
   const apiError = new APIError({
     message: error ? error.message : 'Unauthorized',
@@ -32,17 +33,35 @@ const handleJWT = (req, res, next, roles) =>async (err, uer, info) => {
     }
     await logIn(user, { session: false });
   } catch (e) {
-    console.log("erro "+e);
+    //console.log("erro "+e);
     return next(apiError);
   }
-
+ //console.log("roles"+roles);
+ //console.log("ur"+user.UserRole);
   if (roles === LOGGED_USER) {
-    if (user.userRole === ('admin'|'user') && req.params.userId !== user.UserID.toString()) {
+    if (user.UserRole === 'user' && req.params.userId !== user.UserID.toString()) {
       apiError.status = httpStatus.FORBIDDEN;
       apiError.message = 'Forbiddden';
       return next(apiError);
     }
-  } else if (!roles.includes(user.role)) {
+  } 
+  else if(roles.includes(user.UserRole)===ADMIN)
+  {
+    if (user.UserRole === 'admin' && req.params.userId !== user.UserID.toString()) {
+      apiError.status = httpStatus.FORBIDDEN;
+      apiError.message = 'Forbiddden';
+      return next(apiError);
+    }
+  }
+  else if(roles.includes(user.UserRole)===CAR_OWNER)
+  {
+    if (user.UserRole === 'carowner' && req.params.userId !== user.UserID.toString()) {
+      apiError.status = httpStatus.FORBIDDEN;
+      apiError.message = 'Forbiddden';
+      return next(apiError);
+    }
+  }
+  else if (!roles.includes(user.UserRole)) {
     apiError.status = httpStatus.FORBIDDEN;
     apiError.message = 'Forbidden';
     return next(apiError);
@@ -51,7 +70,7 @@ const handleJWT = (req, res, next, roles) =>async (err, uer, info) => {
   }
 
   req.user = user;
-  console.log(req.user);
+  //console.log(req.user);
   return next();
 };
 
@@ -65,10 +84,10 @@ const jwtOptions = {
 
 const jwt = async (payload, done) => {
   try {
-    console.log(payload);
+    ////console.log(payload);
      await User.getUser(payload.sub,(data)=>{
-      console.log("doned"+ data.FirstName);
-    //  console.log("donne"+user.FirstName);
+      ////console.log("doned"+ data.FirstName);
+    //  //console.log("donne"+user.FirstName);
       user=data;
       if (data) return done(null, data);
       return done(null, false);

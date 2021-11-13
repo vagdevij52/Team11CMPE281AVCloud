@@ -47,7 +47,7 @@ module.exports = {
       isPublic: true,
     };
     if (password) {
-      //console.log("hey wat");
+      //////console.log("hey wat");
       if (user && await this.passwordMatches(password, user[0].UserPassword)) {
         return { user, accessToken:await this.token(user) };
       }
@@ -70,25 +70,25 @@ module.exports = {
       parameters.push({ name: 'Email', type: TYPES.NVarChar, val: email });
       var query = "SELECT * FROM dbo.USERDETAILS WHERE Email = @Email;";
       dbContext.query(query, parameters, false, function (error, data) {
-        //console.log(data);
+        //////console.log(data);
         resolve(data);
         if (error) {
           reject();
         }
         //return response(data, error);
         //datao= data;
-        // ////console.log(datao);
+        // ////////console.log(datao);
         return data;
       });
     });
   },
   async passwordMatches(password, pswd) {
-   // //console.log(password);
-    ////console.log(pswd);
+   // ////console.log(password);
+    //////console.log(pswd);
     // return bcrypt.compare(password, this.password);
     return password == pswd;
   },
-  roles: ['user', 'admin'],
+  roles: ['user', 'admin','carowner'],
   userModel: function (userDetails) {
 
     var user = {
@@ -108,7 +108,7 @@ module.exports = {
   createuser: function (user) {
     //var fn=Promise.promisify(user);
 
-    //console.log(user.FirstName);
+    ////console.log(user.FirstName);
     var parameters = [];
     // parameters.push({ name: 'UserID', type: TYPES.INT, val: 1 });
     parameters.push({ name: 'FirstName', type: TYPES.NVarChar, val: user.FirstName });
@@ -125,10 +125,10 @@ module.exports = {
 
     var query = "INSERT INTO dbo.USERDETAILS(FirstName,LastName,UserRole,Email,UserPassword,UserCreditCard,UserPhone,ProfilePicture) values(@FirstName,@LastName,@UserRole,@Email,@UserPassword,@UserCreditCard,@UserPhone,@ProfilePicture);select @@identity as UserID;";
     dbContext.query(query, parameters, false, function (error, data) {
-      //console.log(data);
+      ////console.log(data);
       //return response(data, error);
       //datao= data;
-      //console.log(datao);
+      ////console.log(datao);
       return data;
     });
 
@@ -157,7 +157,7 @@ module.exports = {
   scheduleRide: function (rideDetails, callback) {
     return new Promise((resolve, reject) => {
     var parameters=[];   
-    console.log(rideDetails);
+    //console.log(rideDetails);
     parameters.push({ name: 'RideStartTime', type: TYPES.DateTime, val: rideDetails.RideStartTime });
    // parameters.push({ name: 'RideEndTime', type: TYPES.DateTime, val: rideDetails.RideEndTime });
     parameters.push({ name: 'RideVehicleID', type: TYPES.Int, val: rideDetails.RideVehicleID });
@@ -182,25 +182,25 @@ module.exports = {
     var sql = "SELECT * FROM AVCLOUD.dbo.USERDETAILS WHERE UserID=@UserID;";
     dbContext.query(sql, parameters,false, function (err, data, fields) {
       if (err) throw err;
-      console.log(data);
-      console.log("why"+data[0].FirstName);
+      //console.log(data);
+      ////console.log("why"+data[0].FirstName);
       resolve(callback(data[0]));
     });
   });
   },
   async getTripDetails(userId,callback){
     return new Promise((resolve, reject) => {
-      ////console.log("tttt"+ tokenObject.userId);
-      console.log("afff");
-     // //console.log(tokenObject);
+      //////console.log("tttt"+ tokenObject.userId);
+      //console.log("afff");
+     // ////console.log(tokenObject);
       var parameters = [];
    
       var query = "SELECT * FROM AVCLOUD.dbo.VEHICLERIDEDETAILS WHERE RideCustomerID="+userId+" order by RideStartTime desc;";
       dbContext.query(query, parameters, false, function (error, data) {
-       // console.log(data[0]);
+       // //console.log(data[0]);
        // resolve(data[0]);
         if (error) {
-          //console.log("errr"+error);
+          ////console.log("errr"+error);
            reject(callback(error));
         }     
         resolve(callback(data));
@@ -277,20 +277,20 @@ module.exports = {
   },
   
   async token(user) {
-    console.log("user");
+    //console.log("user");
     var userId='';
     if(user!=null&& user[0]!=null){
       userId=user[0].UserID;
     }
-    console.log(user);
+    //console.log(user);
     const payload = {
       exp: moment().add(15, 'hours').unix(),
       iat: moment().unix(),
       sub: userId,
     };
-    console.log("payload"+payload.sub);
+    //console.log("payload"+payload.sub);
     var sec="bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4";
-    ////console.log(sec);
+    //////console.log(sec);
     return jwt.encode(payload, sec);
   },
 

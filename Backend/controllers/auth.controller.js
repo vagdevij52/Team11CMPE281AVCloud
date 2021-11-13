@@ -15,11 +15,11 @@ const emailProvider = require('../services/emails/emailProvider');
 async function generateTokenResponse(user, accessToken) {
    // return new Promise((resolve, reject) => {
   const tokenType = 'Bearer';
-  ////console.log("waddd");
-  //console.log(user);
+  //////console.log("waddd");
+  ////console.log(user);
   const refreshToken = await refreshTokenSchema.generate(user[0]).then(function(data){tkn=>{return token}});
-  //console.log("why");
-  //console.log(refreshToken);
+  ////console.log("why");
+  ////console.log(refreshToken);
   const expiresIn = moment().add(15, 'hours');
   return {
     tokenType,
@@ -53,15 +53,15 @@ exports.register = async (req, res, next) => {
  */
 exports.login = async (req, res, next) => {
   try {
+   
     const { user, accessToken } = await User.findAndGenerateToken(req.body);
-    ////console.log("w");
-    ////console.log(user);
-    const token =await generateTokenResponse(user, accessToken);
-    const userTransformed =await User.transform(user);
-    ////console.log("uuu");
-    //console.log(userTransformed);
-    //console.log(token);
-    return res.json({token, user: userTransformed });
+
+    const token = await generateTokenResponse(user, accessToken);
+    // const userTransformed =await User.transform(user);
+    req.locals = {user: user };
+    //console.log("loclas ");
+    //console.log(req.locals);
+    return res.json({ token, user: user });
   } catch (error) {
     return next(error);
   }

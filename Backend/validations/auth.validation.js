@@ -65,5 +65,5 @@ module.exports = {
         .max(128),
       resetToken: Joi.string().required(),
     },
-  },
+  }, 
 };

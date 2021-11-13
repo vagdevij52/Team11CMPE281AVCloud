@@ -15,10 +15,11 @@ const { transform } = require('../models/user/user.model');
 exports.load = async (req, res, next, id) => {
   try {
   
+    //console.log("id "+id);
     const user = await User.getUser(id,(data)=>{
       req.locals = {user: data };
-      console.log("am here");
-      console.log(req.locals);
+      //console.log("am here");
+      //console.log(req.locals);
       return next();
     });
    
@@ -71,10 +72,10 @@ exports.create = (req, res, next) => {
    
     var query="INSERT INTO dbo.USERDETAILS(FirstName,LastName,UserRole,Email,UserPassword,UserCreditCard,UserPhone,ProfilePicture) values(@FirstName,@LastName,@UserRole,@Email,@UserPassword,@UserCreditCard,@UserPhone,@ProfilePicture);select @@identity as UserID;";
     dbContext.query(query, parameters, false,function (error, data) {
-        console.log(data);
+        ////console.log(data);
         //return response(data, error);
         datao= data;
-        console.log(datao);
+        ////console.log(datao);
         return res.json(response(data,error));
     });
       res.status(httpStatus.CREATED);
@@ -102,14 +103,14 @@ catch(err)
  */
  exports.getTripHistory = async (req, res, next) => {
   try {
-    console.log("dnt knw if am here");
+    ////console.log("dnt knw if am here");
     const { user } = req.locals;
     //const newUser = new User.userModel(req.body);
     const userId=req.params.userId;
    
     await User.getTripDetails(52,(data)=>{
-      console.log("done"+ data.RideID);
-    //  console.log("donne"+user.FirstName);
+      ////console.log("done"+ data.RideID);
+    //  ////console.log("donne"+user.FirstName);
       //user=data;
       if (data) return res.json(data);
       //return done(null, false);
@@ -127,14 +128,14 @@ catch(err)
  */
  exports.scheduleTrip = async (req, res, next) => {
   try {
-    console.log("yes if am here");
+    ////console.log("yes if am here");
    // const { user } = req.locals;
     const newRide = new User.rideData(req.body);
    // const userId=req.params.userId;
    
     await User.scheduleRide(newRide,(data)=>{
-      console.log("done "+ data);
-    //  console.log("donne"+user.FirstName);
+      ////console.log("done "+ data);
+    //  ////console.log("donne"+user.FirstName);
       //user=data;
       if (data) return res.json(data);
       //return done(null, false);
