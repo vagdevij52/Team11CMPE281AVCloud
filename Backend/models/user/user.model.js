@@ -11,6 +11,7 @@ const { token } = require('morgan');
 var TYPES = require('tedious').TYPES;
 var response = require('../../utils/response');
 var Promise = require('bluebird');
+const { request } = require('express');
 
 /**
 * User Roles
@@ -21,11 +22,6 @@ var Promise = require('bluebird');
  * User Model
  * @private
  */
-const Employee = {
-  title: TYPES.VarChar,
-  description: TYPES.VarChar
-}
-
 
 /**
  * Add your
@@ -40,9 +36,6 @@ const Employee = {
    * @param {ObjectId} id - The objectId of user.
    * @returns {Promise<User, APIError>}
    */
-
-
-
 module.exports = {
   async findAndGenerateToken(options) {
     const { email, password, refreshObject } = options;
@@ -56,14 +49,14 @@ module.exports = {
     if (password) {
       //console.log("hey wat");
       if (user && await this.passwordMatches(password, user[0].UserPassword)) {
-        return { user, accessToken:await this.token() };
+        return { user, accessToken:await this.token(user) };
       }
       err.message = 'Incorrect email or password';
     } else if (refreshObject && refreshObject.userEmail === email) {
       if (moment(refreshObject.expires).isBefore()) {
         err.message = 'Invalid refresh token.';
       } else {
-        return { user, accessToken:await this.token() };
+        return { user, accessToken:await this.token(user) };
       }
     } else {
       err.message = 'Incorrect email or refreshToken';
@@ -99,18 +92,19 @@ module.exports = {
   userModel: function (userDetails) {
 
     var user = {
-      name: userDetails.name,
-      email: userDetails.email,
-      password: userDetails.password,
-      //services="",
-      role: userDetails.role,
-      mobile: userDetails.mobile
+      FirstName:userDetails.FirstName,
+      LastName:userDetails.LastName,     
+      UserRole:userDetails.UserRole,
+      Email:userDetails.Email,  
+      UserPassword:userDetails.UserPassword,
+      UserCreditCard:userDetails.UserCreditCard,
+      UserPhone:userDetails.UserPhone,
+      ProfilePicture:userDetails.ProfilePicture     
     };
     return user;
-    //picture=userDetails.picture,
-    //createTimestamp=Date.now(),
-    //modifyTimestamp=Date.now()
+  
   },
+  
   createuser: function (user) {
     //var fn=Promise.promisify(user);
 
@@ -146,11 +140,71 @@ module.exports = {
       return callback(data);
     });
   },
+   rideData:function(rideDetails){
+     const rideDtls={
+    RideStartTime:rideDetails.RideStartTime,
+    RideEndTime:rideDetails.RideEndTime,
+    RideVehicleID:rideDetails.RideVehicleID,
+    RideOrigin:rideDetails.RideOrigin,
+    RideDestination:rideDetails.RideDestination,
+    RideCustomerID:rideDetails.RideCustomerID,
+    RideDistance:rideDetails.RideDistance,
+    RideAmount:rideDetails.RideAmount,
+    RideStatus:rideDetails.RideStatus
+     };
+     return rideDtls;
+  },
+  scheduleRide: function (rideDetails, callback) {
+    return new Promise((resolve, reject) => {
+    var parameters=[];   
+    console.log(rideDetails);
+    parameters.push({ name: 'RideStartTime', type: TYPES.DateTime, val: rideDetails.RideStartTime });
+   // parameters.push({ name: 'RideEndTime', type: TYPES.DateTime, val: rideDetails.RideEndTime });
+    parameters.push({ name: 'RideVehicleID', type: TYPES.Int, val: rideDetails.RideVehicleID });
+    parameters.push({ name: 'RideOrigin', type: TYPES.NVarChar, val: rideDetails.RideOrigin });
+    parameters.push({ name: 'RideDestination', type: TYPES.NVarChar, val: rideDetails.RideDestination });
+    parameters.push({ name: 'RideCustomerID', type: TYPES.Int, val: rideDetails.RideCustomerID });
+    parameters.push({ name: 'RideDistance', type: TYPES.Float, val: rideDetails.RideDistance });
+    parameters.push({ name: 'RideAmount', type: TYPES.Float, val: rideDetails.RideAmount });
+    parameters.push({ name: 'RideStatus', type: TYPES.NVarChar, val: 'booked' });
+    var sql = "INSERT INTO AVCLOUD.dbo.VEHICLERIDEDETAILS(RideStartTime,RideVehicleID,RideOrigin,RideDestination,RideCustomerID,RideDistance,RideAmount,RideStatus) values(@RideStartTime,@RideVehicleID,@RideOrigin,@RideDestination,@RideCustomerID,@RideDistance,@RideAmount,@RideStatus);SELECT @@identity as RideID";
+    dbContext.query(sql, parameters,false, function (err, data, fields) {
+      if (err) reject(callback(err));     
+      resolve(callback(data));
+    });
+  });
+  },
   getUser: function (myID, callback) {
-    var sql = 'SELECT * FROM flori WHERE id= ?';
-    db.query(sql, myID, function (err, data, fields) {
+    return new Promise((resolve, reject) => {
+    var parameters=[];    
+    //console.log("userid"+myID);
+    parameters.push({ name: 'UserID', type: TYPES.Int, val: myID });
+    var sql = "SELECT * FROM AVCLOUD.dbo.USERDETAILS WHERE UserID=@UserID;";
+    dbContext.query(sql, parameters,false, function (err, data, fields) {
       if (err) throw err;
-      return callback(data[0]);
+      console.log(data);
+      console.log("why"+data[0].FirstName);
+      resolve(callback(data[0]));
+    });
+  });
+  },
+  async getTripDetails(userId,callback){
+    return new Promise((resolve, reject) => {
+      ////console.log("tttt"+ tokenObject.userId);
+      console.log("afff");
+     // //console.log(tokenObject);
+      var parameters = [];
+   
+      var query = "SELECT * FROM AVCLOUD.dbo.VEHICLERIDEDETAILS WHERE RideCustomerID="+userId+" order by RideStartTime desc;";
+      dbContext.query(query, parameters, false, function (error, data) {
+       // console.log(data[0]);
+       // resolve(data[0]);
+        if (error) {
+          //console.log("errr"+error);
+           reject(callback(error));
+        }     
+        resolve(callback(data));
+      });
     });
   },
   addUser: async function (userDetails, callback) {
@@ -192,26 +246,49 @@ module.exports = {
       return callback(data);
     });
   },
+  async get(id) {
+    let user;
+
+    if (id!=null|| id!="") {
+      user = await this.getUser(id,(userData)=>{
+        if (userData) {
+          return userData;
+        }else{
+          throw new APIError({
+            message: 'User does not exist',
+            status: httpStatus.NOT_FOUND,
+          });
+        }
+      });
+    }    
+  },
   async transform(data) {
      // return new Promise((resolve, reject) => {
     const transformed = {};
     const fields = ['UserID', 'FirstName', 'LastName', 'UserRole', 'Email', 'UserPassword', 'UserCreditCard', 'UserPhone', 'ProfilePicture'];
-    ////console.log("wasfff");
-    ////console.log(data[0].UserID);
+  
     if (data != null && data[0] != null) {
       fields.forEach((field) => {
         transformed[field] = data[0][field];
       });
     }
     return transformed;
-    //});
+    
   },
-  async token() {
+  
+  async token(user) {
+    console.log("user");
+    var userId='';
+    if(user!=null&& user[0]!=null){
+      userId=user[0].UserID;
+    }
+    console.log(user);
     const payload = {
-      exp: moment().add(jwtExpirationInterval, 'minutes').unix(),
+      exp: moment().add(15, 'hours').unix(),
       iat: moment().unix(),
-      sub: this._id,
+      sub: userId,
     };
+    console.log("payload"+payload.sub);
     var sec="bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4";
     ////console.log(sec);
     return jwt.encode(payload, sec);

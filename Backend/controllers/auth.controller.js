@@ -20,7 +20,7 @@ async function generateTokenResponse(user, accessToken) {
   const refreshToken = await refreshTokenSchema.generate(user[0]).then(function(data){tkn=>{return token}});
   //console.log("why");
   //console.log(refreshToken);
-  const expiresIn = moment().add(jwtExpirationInterval, 'minutes');
+  const expiresIn = moment().add(15, 'hours');
   return {
     tokenType,
     accessToken,

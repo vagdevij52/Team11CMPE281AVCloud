@@ -7,15 +7,21 @@ const User = Promise.promisifyAll(require('../models/user/user.model'));
 var TYPES = require('tedious').TYPES;
 var response = require('../utils/response');
 const dbContext = require('../database/dbContext');
+const { transform } = require('../models/user/user.model');
 /**
  * Load user and append to req.
  * @public
  */
 exports.load = async (req, res, next, id) => {
   try {
-    const user = await User.get(id);
-    req.locals = { user };
-    return next();
+  
+    const user = await User.getUser(id,(data)=>{
+      req.locals = {user: data };
+      console.log("am here");
+      console.log(req.locals);
+      return next();
+    });
+   
   } catch (error) {
     return next(error);
   }
@@ -25,7 +31,7 @@ exports.load = async (req, res, next, id) => {
  * Get user
  * @public
  */
-exports.get = (req, res) => res.json(req.locals.user.transform());
+exports.get = (req, res) => res.json( req.locals.user= transform(req.locals.user));
 
 /**
  * Get logged in user info
@@ -33,27 +39,7 @@ exports.get = (req, res) => res.json(req.locals.user.transform());
  */
 exports.loggedIn = (req, res) => res.json(req.user.transform());
 
-// exports.addUser=(req,res,next)=>{
-//   const user = {
-//     FirstName:"lakshmi",
-//     LastName:"priya",     
-//     UserRole:"user",
-//     Email:"lpriya33@gmail.com",  
-//     UserPassword:"p",
-//     UserCreditCard:"12345",
-//     UserPhone:"56543212",
-//     ProfilePicture:"abcd.jpg"
-//    };
-//    Promise.resolve(User.createuser(user)).then(function(){
-//     console.log("yes after");
-//    });
-//     //  const userdata= User.createuser(user).then(function(){
-//     //    console.log("yes after");
-//     //  });
-//      //console.log()
-//     // console.log(userdata);
 
-// };
 /**
  * Create new user
  * @public
@@ -106,6 +92,57 @@ catch(err)
 {
   
 }
+};
+
+/**
+ * Get user ride history details
+ * @apiParam  {INT}        userid     User's ID
+ * @apiParam  {String}     role       User's role
+ * @public
+ */
+ exports.getTripHistory = async (req, res, next) => {
+  try {
+    console.log("dnt knw if am here");
+    const { user } = req.locals;
+    //const newUser = new User.userModel(req.body);
+    const userId=req.params.userId;
+   
+    await User.getTripDetails(52,(data)=>{
+      console.log("done"+ data.RideID);
+    //  console.log("donne"+user.FirstName);
+      //user=data;
+      if (data) return res.json(data);
+      //return done(null, false);
+    });
+   
+  } catch (error) {
+    next(User.checkDuplicateEmail(error));
+  }
+};
+/**
+ * Schedule ride 
+ * @apiParam  {INT}        userid     User's ID
+ * @apiParam  {String}     role       User's role
+ * @public
+ */
+ exports.scheduleTrip = async (req, res, next) => {
+  try {
+    console.log("yes if am here");
+   // const { user } = req.locals;
+    const newRide = new User.rideData(req.body);
+   // const userId=req.params.userId;
+   
+    await User.scheduleRide(newRide,(data)=>{
+      console.log("done "+ data);
+    //  console.log("donne"+user.FirstName);
+      //user=data;
+      if (data) return res.json(data);
+      //return done(null, false);
+    });
+   
+  } catch (error) {
+    next(User.checkDuplicateEmail(error));
+  }
 };
 /**
  * Replace existing user

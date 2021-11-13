@@ -69,9 +69,54 @@ router
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated Users can access the data
    */
   .get(authorize(), controller.loggedIn);
-
+  router
+  .route('/tripdetails/:userId')
+  /**
+   * @api {get} users/ridedetails/:id Get User
+   * @apiDescription Get user information
+   * @apiVersion 1.0.0
+   * @apiName GetUserridedetails
+   * @apiGroup User
+   * @apiPermission user
+   *
+   * @apiHeader {String} Authorization   User's access token
+   *
+   * @apiSuccess {String}  id         User's id
+   * @apiSuccess {String}  name       User's name
+   * @apiSuccess {String}  email      User's email
+   * @apiSuccess {String}  role       User's role
+   * @apiSuccess {Date}    createdAt  Timestamp
+   *
+   * @apiError (Unauthorized 401) Unauthorized Only authenticated users can access the data
+   * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can access the data
+   * @apiError (Not Found 404)    NotFound     User does not exist
+   */
+  .get(authorize(LOGGED_USER), controller.getTripHistory);
+  router
+  .route('/scheduleride')
+  /**
+   * @api {get} users/scheduleride Get User
+   * @apiDescription Get user information
+   * @apiVersion 1.0.0
+   * @apiName GetUserridedetails
+   * @apiGroup User
+   * @apiPermission user
+   *
+   * @apiHeader {String} Authorization   User's access token
+   *
+   * @apiSuccess {String}  id         User's id
+   * @apiSuccess {String}  name       User's name
+   * @apiSuccess {String}  email      User's email
+   * @apiSuccess {String}  role       User's role
+   * @apiSuccess {Date}    createdAt  Timestamp
+   *
+   * @apiError (Unauthorized 401) Unauthorized Only authenticated users can access the data
+   * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can access the data
+   * @apiError (Not Found 404)    NotFound     User does not exist
+   */
+  .post(authorize(LOGGED_USER), controller.scheduleTrip);
 router
-  .route('/:userId')
+  .route('/:usrId')
   /**
    * @api {get} v1/users/:id Get User
    * @apiDescription Get user information
@@ -92,7 +137,7 @@ router
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can access the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .get(authorize(LOGGED_USER), controller.get)
+  //.get(authorize(LOGGED_USER), controller.get)
   /**
    * @api {put} v1/users/:id Replace User
    * @apiDescription Replace the whole user document with a new one

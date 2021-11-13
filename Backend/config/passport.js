@@ -1,21 +1,27 @@
 const JwtStrategy = require('passport-jwt').Strategy;
 const BearerStrategy = require('passport-http-bearer');
 const { ExtractJwt } = require('passport-jwt');
-const { jwtSecret } = require('./vars');
-const authProviders = require('../api/services/authProviders');
-const User = require('../api/models/user/user.model');
+const { jwSecret } = require('./vars');
+const authProviders = require('../services/authProviders');
+const User = require('../models/user/user.model');
 
-const jwtOptions = {
-  secretOrKey: jwtSecret,
+const jwtSecrret="bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4";
+console.log("hh"+jwtSecrret);
+const jwtOptions = {  
+  secretOrKey: "bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4",
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
 };
 
 const jwt = async (payload, done) => {
   try {
-    const user = await User.findById(payload.sub);
+    const user = await User.getUser(payload.sub,(data)=>{
+      console.log("done");
+    });
+    console.log("done");
     if (user) return done(null, user);
     return done(null, false);
   } catch (error) {
+    return "aaaa";
     return done(error, false);
   }
 };
