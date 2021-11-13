@@ -29,7 +29,7 @@
     "express-session": "^1.15.6",
     "express-sessions": "^1.0.6",
     "express-validation": "^1.0.3",
-    "express-validator": "^6.10.0",
+    "express-validator": "^6.13.0",
     "http-status": "^1.0.1",
     "joi": "^10.4.1",
     "jwt-simple": "0.5.6",
