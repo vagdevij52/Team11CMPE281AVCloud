@@ -9,10 +9,15 @@ class LandingPage extends Component {
     this.state = {};
   }
 
+  componentWillMount(){
+    //API calls to get user data
+  }
+
   render() {
     return (
       <div>
         <Navheader />
+       
         <div className='landing'>
           <Image
             className='landingpic'

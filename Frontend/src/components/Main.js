@@ -4,6 +4,10 @@ import Profilepage from './ProfilePage/profilePage';
 import LandingPage from './LandingPage/landingPage';
 import Login from './Login/login';
 import Signup from './Signup/signup';
+import HomePageOwner from './Home/Home-Owner';
+import HomePageUser from './Home/Home-User';
+import UserTransactions from './UserTransactions/UserTransactions'
+import HomePageAdmin from './Home/Home-Admin'
 
 //<Route path="/" component={Navbar}/>
 //<Route path="/login" component={Login}/>
@@ -18,6 +22,10 @@ class Main extends Component {
           <Route path='/signup' component={Signup} />
           <Route path='/login' component={Login} />
           <Route path='/profile' component={Profilepage} />
+          <Route path='/home-owner' component={HomePageOwner} />
+          <Route path='/home-user' component={HomePageUser} />
+          <Route path='/userTransactions' component={UserTransactions} />
+          <Route path='/home-admin' component={HomePageAdmin} />
         </Switch>
       </div>
     );
