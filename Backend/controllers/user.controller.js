@@ -48,14 +48,14 @@ exports.loggedIn = (req, res) => res.json(req.user.transform());
 exports.create = (req, res, next) => {
   try {
     const user = {
-     FirstName:"lakshmi",
-     LastName:"priya",     
-     UserRole:"user",
-     Email:"lpriya33@gmail.com",  
-     UserPassword:"p",
-     UserCreditCard:"12345",
-     UserPhone:"56543212",
-     ProfilePicture:"abcd.jpg"
+     FirstName:req.body.FirstName,
+     LastName:req.body.LastName,     
+     UserRole:req.body.UserRole,
+     Email:req.body.Email,  
+     UserPassword:req.body.UserPassword,
+     UserCreditCard:req.body.UserCreditCard,
+     UserPhone:req.body.UserPhone,
+     ProfilePicture:req.body.ProfilePicture
     };
      // const usr= User.createuser(user);
      var parameters = [];
@@ -69,12 +69,12 @@ exports.create = (req, res, next) => {
     parameters.push({ name: 'UserPhone', type: TYPES.NVarChar, val:user.UserPhone });
     parameters.push({ name: 'ProfilePicture', type: TYPES.NVarChar, val: user.ProfilePicture });
    
-   
+  
     var query="INSERT INTO dbo.USERDETAILS(FirstName,LastName,UserRole,Email,UserPassword,UserCreditCard,UserPhone,ProfilePicture) values(@FirstName,@LastName,@UserRole,@Email,@UserPassword,@UserCreditCard,@UserPhone,@ProfilePicture);select @@identity as UserID;";
     dbContext.query(query, parameters, false,function (error, data) {
         ////console.log(data);
         //return response(data, error);
-        datao= data;
+        //datao= data;
         ////console.log(datao);
         return res.json(response(data,error));
     });
