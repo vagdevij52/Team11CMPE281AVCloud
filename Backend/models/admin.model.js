@@ -15,21 +15,21 @@ const { request } = require('express');
 const { sendDbResponse } = require('../utils/dbUtility');
 
 module.exports = {
-    async user(data){
-        return  {
-            UserID:data.UserID,
-            FirstName:data.FirstName,
-            LastName:data.LastName,
-            UserRole:data.UserRole,
-            Email:data.Email,
-            UserPassword:data.UserPassword,
-            UserCreditCard:data.UserCreditCard,
-            UserPhone:data.UserPhone,
-            ProfilePicture:data.ProfilePicture
-        };        
+    async user(data) {
+        return {
+            UserID: data.UserID,
+            FirstName: data.FirstName,
+            LastName: data.LastName,
+            UserRole: data.UserRole,
+            Email: data.Email,
+            UserPassword: data.UserPassword,
+            UserCreditCard: data.UserCreditCard,
+            UserPhone: data.UserPhone,
+            ProfilePicture: data.ProfilePicture
+        };
     },
-    async vehicle(data){
-        return  {
+    async vehicle(data) {
+        return {
             VehcileID,
             VehcileNum,
             VehcileModel,
@@ -42,7 +42,7 @@ module.exports = {
             VehcileSeatingCapacity,
             VehcileDistanceDriven,
             VehcileApprovalStatus
-        }=data;   
+        } = data;
     },
     async getUsersList() {
         return new Promise((resolve, reject) => {
@@ -78,13 +78,13 @@ module.exports = {
         //console.log(userData);
         //console.log(userData.UserID );
         //const { userId, firstname, lastname, role, email, phone } = {userData.userID,userData.FirstName,userData.LastName,userData.UserRole,userData.Email,;
-        return new Promise((resolve, reject) => {           
+        return new Promise((resolve, reject) => {
             var parameters = [];
-          
+
             parameters.push({ name: 'UserID', type: TYPES.Int, val: userData.UserID });
             parameters.push({ name: 'FirstName', type: TYPES.NVarChar, val: userData.FirstName });
             parameters.push({ name: 'LastName', type: TYPES.NVarChar, val: userData.LastName });
-            parameters.push({ name: 'UserRole', type: TYPES.NVarChar, val:userData.UserRole });
+            parameters.push({ name: 'UserRole', type: TYPES.NVarChar, val: userData.UserRole });
             parameters.push({ name: 'Email', type: TYPES.NVarChar, val: userData.Email });
             parameters.push({ name: 'UserPhone', type: TYPES.NVarChar, val: userData.UserPhone });
             var sql = "UPDATE AVCLOUD.dbo.USERDETAILS SET FirstName=@FirstName,LastName=@LastName,UserRole=@UserRole,Email=@Email,UserPhone=@UserPhone WHERE UserID=@UserID;";
@@ -98,15 +98,15 @@ module.exports = {
         });
     },
     async createUser(userData) {
-        
+
         //console.log(userData.UserRole.toString().toLowerCase().replace(/ +/g, ""));
         return new Promise((resolve, reject) => {
             var parameters = [];
             //const { firstname, lastname, role, email, password, creditcard, phone, profilepic } = userDetails;
-            parameters.push({ name: 'FirstName', type: TYPES.NVarChar, val:userData.FirstName });
+            parameters.push({ name: 'FirstName', type: TYPES.NVarChar, val: userData.FirstName });
             parameters.push({ name: 'LastName', type: TYPES.NVarChar, val: userData.LastName });
             parameters.push({ name: 'UserRole', type: TYPES.NVarChar, val: userData.UserRole.toString().toLowerCase().replace(/ +/g, "") });
-            parameters.push({ name: 'Email', type: TYPES.NVarChar, val:userData.Email });
+            parameters.push({ name: 'Email', type: TYPES.NVarChar, val: userData.Email });
             parameters.push({ name: 'UserPassword', type: TYPES.NVarChar, val: userData.UserPassword });
             parameters.push({ name: 'UserCreditCard', type: TYPES.NVarChar, val: userData.UserCreditCard });
             parameters.push({ name: 'UserPhone', type: TYPES.NVarChar, val: userData.UserPhone });
@@ -117,8 +117,8 @@ module.exports = {
                 if (data) {
                     resolve({ msg: 'success', data });
                 } else
-                    resolve({msg:'failed '+error});
-                   // throw new APIError(error);
+                    resolve({ msg: 'failed ' + error });
+                // throw new APIError(error);
             });
         });
     },
@@ -137,25 +137,25 @@ module.exports = {
             });
         });
     },
-    async editVehicle(vehicleData,userID) {
+    async editVehicle(vehicleData, userID) {
         ////console.log("useredit");
         //console.log("useredit");
         //console.log(vehicleData);
         //console.log(vehicleData.VehicleID );
         //const { userId, firstname, lastname, role, email, phone } = {userData.userID,userData.FirstName,userData.LastName,userData.UserRole,userData.Email,;
-        return new Promise((resolve, reject) => {           
+        return new Promise((resolve, reject) => {
             var parameters = [];
-          
+
             parameters.push({ name: 'VehicleID', type: TYPES.Int, val: vehicleData.VehicleID });
-            parameters.push({ name: 'VehcileNum', type: TYPES.NVarChar, val: vehicleData.VehicleNum});
+            parameters.push({ name: 'VehcileNum', type: TYPES.NVarChar, val: vehicleData.VehicleNum });
             parameters.push({ name: 'VehcileModel', type: TYPES.NVarChar, val: vehicleData.VehicleModel });
-            parameters.push({ name: 'VehcileMake', type: TYPES.NVarChar, val:vehicleData.VehicleMake });
+            parameters.push({ name: 'VehcileMake', type: TYPES.NVarChar, val: vehicleData.VehicleMake });
             parameters.push({ name: 'VehcileColor', type: TYPES.NVarChar, val: vehicleData.VehicleColor });
             parameters.push({ name: 'VehcileMileage', type: TYPES.Float, val: vehicleData.VehicleMileage });
             parameters.push({ name: 'VehcileSize', type: TYPES.NChar, val: vehicleData.VehicleSize });
             parameters.push({ name: 'VehcileScheduleStatus', type: TYPES.NVarChar, val: vehicleData.VehcileScheduleStatus });
             parameters.push({ name: 'VehcileStatus', type: TYPES.NVarChar, val: vehicleData.VehicleStatus });
-            parameters.push({ name: 'VehcileSeatingCapacity', type: TYPES.Int, val:vehicleData.VehicleSeatingCapacity });
+            parameters.push({ name: 'VehcileSeatingCapacity', type: TYPES.Int, val: vehicleData.VehicleSeatingCapacity });
             parameters.push({ name: 'VehcileDistanceDriven', type: TYPES.Float, val: vehicleData.VehicleDistanceDriven });
             parameters.push({ name: 'VehcileApprovalStatus', type: TYPES.NVarChar, val: vehicleData.VehicleApprovalStatus });
             parameters.push({ name: 'VehicleOwnerID', type: TYPES.Int, val: userID });
@@ -169,20 +169,20 @@ module.exports = {
             });
         });
     },
-    async createVehicle(vehicleData,userID) {
+    async createVehicle(vehicleData, userID) {
         //console.log("dfg");
         //console.log(vehicleData);
         return new Promise((resolve, reject) => {
             var parameters = [];
-            parameters.push({ name: 'VehcileNum', type: TYPES.NVarChar, val: vehicleData.VehicleNum});
+            parameters.push({ name: 'VehcileNum', type: TYPES.NVarChar, val: vehicleData.VehicleNum });
             parameters.push({ name: 'VehcileModel', type: TYPES.NVarChar, val: vehicleData.VehicleModel });
-            parameters.push({ name: 'VehcileMake', type: TYPES.NVarChar, val:vehicleData.VehicleMake });
+            parameters.push({ name: 'VehcileMake', type: TYPES.NVarChar, val: vehicleData.VehicleMake });
             parameters.push({ name: 'VehcileColor', type: TYPES.NVarChar, val: vehicleData.VehicleColor });
             parameters.push({ name: 'VehcileMileage', type: TYPES.Float, val: vehicleData.VehicleMileage });
             parameters.push({ name: 'VehcileSize', type: TYPES.NChar, val: vehicleData.VehicleSize });
             parameters.push({ name: 'VehcileScheduleStatus', type: TYPES.NVarChar, val: vehicleData.VehcileScheduleStatus });
             parameters.push({ name: 'VehcileStatus', type: TYPES.NVarChar, val: vehicleData.VehicleStatus });
-            parameters.push({ name: 'VehcileSeatingCapacity', type: TYPES.Int, val:vehicleData.VehicleSeatingCapacity });
+            parameters.push({ name: 'VehcileSeatingCapacity', type: TYPES.Int, val: vehicleData.VehicleSeatingCapacity });
             parameters.push({ name: 'VehcileDistanceDriven', type: TYPES.Float, val: vehicleData.VehicleDistanceDriven });
             parameters.push({ name: 'VehcileApprovalStatus', type: TYPES.NVarChar, val: vehicleData.VehicleApprovalStatus });
             parameters.push({ name: 'VehicleOwnerID', type: TYPES.Int, val: userID });
@@ -227,32 +227,89 @@ module.exports = {
     },
     async getUser(myID) {
         return new Promise((resolve, reject) => {
-        var parameters=[];    
-        ////console.log("userid"+myID);
-        parameters.push({ name: 'UserID', type: TYPES.Int, val: myID });
-        var sql = "SELECT * FROM AVCLOUD.dbo.USERDETAILS WHERE UserID=@UserID;";
-        dbContext.query(sql, parameters,false, function (err, data, fields) {
-          if (err) throw err;
-          ////console.log(data);
-          ////console.log("why"+data[0].FirstName);
-          if(data && data[0])resolve(data[0]);
-          else if(!data&&!err) resolve();
+            var parameters = [];
+            ////console.log("userid"+myID);
+            parameters.push({ name: 'UserID', type: TYPES.Int, val: myID });
+            var sql = "SELECT * FROM AVCLOUD.dbo.USERDETAILS WHERE UserID=@UserID;";
+            dbContext.query(sql, parameters, false, function (err, data, fields) {
+                if (err) throw err;
+                ////console.log(data);
+                ////console.log("why"+data[0].FirstName);
+                if (data && data[0]) resolve(data[0]);
+                else if (!data && !err) resolve();
+            });
         });
-      });
-      },
-      async getVehicle(myID) {
+    },
+    async getVehicle(myID) {
         return new Promise((resolve, reject) => {
-        var parameters=[];    
-        ////console.log("userid"+myID);
-        parameters.push({ name: 'VehicleID', type: TYPES.Int, val: myID });
-        var sql = "SELECT * FROM AVCLOUD.dbo.VEHICLEDETAILS WHERE VehcileID=@VehicleID;";
-        dbContext.query(sql, parameters,false, function (err, data, fields) {
-          if (err) throw err;
-          ////console.log(data);
-          //////console.log("why"+data[0].FirstName);
-          if(data && data[0])resolve(data[0]);
-          else if(!data&&!err) resolve();
+            var parameters = [];
+            ////console.log("userid"+myID);
+            parameters.push({ name: 'VehicleID', type: TYPES.Int, val: myID });
+            var sql = "SELECT * FROM AVCLOUD.dbo.VEHICLEDETAILS WHERE VehcileID=@VehicleID;";
+            dbContext.query(sql, parameters, false, function (err, data, fields) {
+                if (err) throw err;
+                ////console.log(data);
+                //////console.log("why"+data[0].FirstName);
+                if (data && data[0]) resolve(data[0]);
+                else if (!data && !err) resolve();
+            });
         });
-      });
-      },
+    },
+    async deleteRide(rideId) {
+        ////console.log("dddd"+vehicleId);
+        return new Promise((resolve, reject) => {
+            var parameters = [];
+            parameters.push({ name: 'RideID', type: TYPES.Int, val: rideId });
+            var sql = "DELETE FROM AVCLOUD.dbo.VEHICLERIDEDETAILS WHERE RideID=@RideID;";
+            dbContext.getQuery(sql, parameters, false, function (error, data) {
+                if (data) {
+                    resolve({ msg: 'success', data });
+                } else if (error)
+                    throw new APIError(error);
+                else {
+                    resolve({ msg: 'success! no ride data available' });
+                }
+
+            });
+        });
+    },
+    async cancelRide(rideId) {
+        ////console.log("dddd"+vehicleId);
+        return new Promise((resolve, reject) => {
+            var parameters = [];
+            parameters.push({ name: 'RideID', type: TYPES.Int, val: rideId });
+            var sql = "UPDATE AVCLOUD.dbo.VEHICLERIDEDETAILS SET RideStatus='cancelled' WHERE RideID=@RideID;";
+            dbContext.getQuery(sql, parameters, false, function (error, data) {
+                if (data) {
+                    resolve({ msg: 'success', data });
+                } else if (error)
+                    throw new APIError(error);
+                else {
+                    resolve({ msg: 'success! no ride data available' });
+                }
+
+            });
+        });
+    },
+    async getRideById(rideId,isCancel) {
+        console.log("dddd"+rideId);
+        return new Promise((resolve, reject) => {
+            var parameters = [];
+            parameters.push({ name: 'RideID', type: TYPES.Int, val: rideId});
+            if(!isCancel)
+            var sql = "SELECT * FROM AVCLOUD.dbo.VEHICLERIDEDETAILS WHERE RideID=@RideID AND RideStatus in('completed','booked');";
+            if(isCancel)
+            var sql = "SELECT * FROM AVCLOUD.dbo.VEHICLERIDEDETAILS WHERE RideID=@RideID AND RideSTatus NOT IN('completed');";
+            dbContext.getQuery(sql, parameters, false, function (error, data) {
+                if (data && data[0]) {                    
+                     resolve({ msg: 'success',RideID: data[0].RideID });
+                 } else if(error)                   
+                     throw new APIError(error);
+                 else{                     
+                     resolve({ msg: 'success! no ride data available'});
+                 }
+                    
+            });
+        });
+    }
 };

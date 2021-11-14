@@ -18,6 +18,13 @@ module.exports = {
                 .required(),
         }
     },
+    deleteRide:
+    {
+        params: {
+            rideId: Joi.number()
+                .required(),
+        }
+    },
     createUser:
     {
         body:
