@@ -5,6 +5,7 @@
  const APIError = require('../errors/api-error');
  require('../config/passport');
  const ADMIN = 'admin';
+ const SYSADMIN='sys admin';
  const LOGGED_USER = '_loggedUser';
  const CAR_OWNER='carowner';
  const { ExtractJwt } = require('passport-jwt');
@@ -45,9 +46,9 @@ const handleJWT = (req, res, next, roles) =>async (err, uer, info) => {
       return next(apiError);
     }
   } 
-  else if(roles.includes(user.UserRole)===ADMIN)
+  else if(roles.includes(user.UserRole)===ADMIN||roles.includes(user.UserRole)===SYSADMIN)
   {
-    if (user.UserRole === 'admin' && req.params.userId !== user.UserID.toString()) {
+    if (user.UserRole === ('admin'||'sysadmin') && req.params.userId !== user.UserID.toString()) {
       apiError.status = httpStatus.FORBIDDEN;
       apiError.message = 'Forbiddden';
       return next(apiError);

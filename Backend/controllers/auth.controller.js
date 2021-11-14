@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const moment = require('moment-timezone');
 const { omit } = require('lodash');
 const User = require('../models/user/user.model');
+const Admin = require('../models/admin.model');
 const refreshTokenSchema = require('../models/refreshToken.model');
 const PasswordResetToken = require('../models/passwordResetToken.model');
 const { jwtExpirationInterval } = require('../config/vars');
@@ -36,14 +37,19 @@ async function generateTokenResponse(user, accessToken) {
  */
 exports.register = async (req, res, next) => {
   try {
-    const userData = omit(req.body, 'role');
-    const user = await new User(userData).save();
-    const userTransformed = User.transform(user);
-    const token =await generateTokenResponse(user, user.token());
-    res.status(httpStatus.CREATED);
-    return res.json({ token, user: userTransformed });
+    const userDtls = await Admin.user(req.body);
+    const user = await Admin.createUser(userDtls);
+
+    if (user) {
+      res.status(httpStatus.OK);
+      return res.json(user);
+    }
+    throw new APIError({
+      status: httpStatus.BAD_REQUEST,
+      message: 'No user data available',
+    });
   } catch (error) {
-    return next(User.checkDuplicateEmail(error));
+    return next(error);
   }
 };
 

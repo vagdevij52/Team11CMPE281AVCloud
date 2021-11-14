@@ -13,7 +13,7 @@ var response = require('../utils/response');
 var Promise = require('bluebird');
 const { request } = require('express');
 const { sendDbResponse } = require('../utils/dbUtility');
-const { getVehiclesList } = require('../controllers/owner.controller');
+
 module.exports = {
     async user(data) {
         return {

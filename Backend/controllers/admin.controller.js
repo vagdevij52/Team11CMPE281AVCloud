@@ -7,6 +7,7 @@ const Admin = Promise.promisifyAll(require('../models/admin.model'));
 var TYPES = require('tedious').TYPES;
 var response = require('../utils/response');
 const dbContext = require('../database/dbContext');
+const APIError = require('../errors/api-error');
 const { transform } = require('../models/user/user.model');
 /**
  * Get user ride history details
@@ -131,7 +132,7 @@ exports.editVehicle = async (req, res, next) => {
             const vehicleDtls = await Admin.vehicle(req.body);
             ////console.log("userdeta");
             ////console.log(vehicleDtls);
-            const vhc = await Admin.editVehicle(vehicleDtls,userid);
+            const vhc = await Admin.editVehicle(vehicleDtls, userid);
             if (vhc) {
                 res.status(httpStatus.OK);
                 return res.json(vhc);
@@ -167,7 +168,7 @@ exports.createVehicle = async (req, res, next) => {
                 message: 'No User data available',
             });
         }
-        const vehicle = await Admin.createVehicle(vehicleDtls,userid);
+        const vehicle = await Admin.createVehicle(vehicleDtls, userid);
 
         if (vehicle) {
             res.status(httpStatus.OK);
@@ -184,7 +185,7 @@ exports.createVehicle = async (req, res, next) => {
 exports.deleteVehicle = async (req, res, next) => {
     try {
         const vehicleId = req.params.vehicleId;
-        
+
         const vehicleExists = await Admin.getVehicle(vehicleId);
         if (vehicleExists) {
             const vehicle = await Admin.deleteVehicle(vehicleId);
@@ -219,6 +220,57 @@ exports.getAllRidesList = async (req, res, next) => {
             status: httpStatus.BAD_REQUEST,
             message: 'No rides data available',
         });
+    } catch (error) {
+        return next(error);
+    }
+};
+exports.deleteRide = async (req, res, next) => {
+    try {
+        //first check if ride id exists and then delete it
+        const getRideDtls = await Admin.getRideById(req.params.rideId,false);
+        console.log(getRideDtls);
+        if (getRideDtls.RideID) {
+            const rides = await Admin.deleteRide(req.params.rideId);
+            if (rides) {
+                res.status(httpStatus.OK);
+                return res.json(rides);
+            }
+            throw new APIError({
+                status: httpStatus.BAD_REQUEST,
+                message: 'Error deleting a ride',
+            });
+        }
+        else {
+            throw new APIError({
+                status: httpStatus.BAD_REQUEST,
+                message: 'No rides data available',
+            });
+        }
+    } catch (error) {
+        return next(error);
+    }
+};
+exports.cancelRide = async (req, res, next) => {
+    try {
+        //first check if ride id exists and then delete it
+        const getRideDtls = await Admin.getRideById(req.params.rideId,true);
+        if (getRideDtls.RideID) {
+            const rides = await Admin.cancelRide(req.params.rideId);
+            if (rides) {
+                res.status(httpStatus.OK);
+                return res.json(rides);
+            }
+            throw new APIError({
+                status: httpStatus.BAD_REQUEST,
+                message: 'Error cancelling a ride',
+            });
+        }
+        else {
+            throw new APIError({
+                status: httpStatus.BAD_REQUEST,
+                message: 'No rides data available',
+            });
+        }
     } catch (error) {
         return next(error);
     }
