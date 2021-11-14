@@ -44,7 +44,7 @@ require('./routes')(app);
 
 // const dbconnection = mysql.createConnection(config.databaseOptions);
 
-app.listen(8000, () => {
+app.listen(3001, () => {
   console.log('Server Listening on port 3001');
 });
 
