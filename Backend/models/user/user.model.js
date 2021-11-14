@@ -88,7 +88,7 @@ module.exports = {
     // return bcrypt.compare(password, this.password);
     return password == pswd;
   },
-  roles: ['user', 'admin','carowner'],
+  roles: ['user', 'admin','carowner','sysadmin'],
   userModel: function (userDetails) {
 
     var user = {

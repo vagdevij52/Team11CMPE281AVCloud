@@ -98,12 +98,14 @@ module.exports = {
         });
     },
     async createUser(userData) {
+        
+        //console.log(userData.UserRole.toString().toLowerCase().replace(/ +/g, ""));
         return new Promise((resolve, reject) => {
             var parameters = [];
             //const { firstname, lastname, role, email, password, creditcard, phone, profilepic } = userDetails;
             parameters.push({ name: 'FirstName', type: TYPES.NVarChar, val:userData.FirstName });
             parameters.push({ name: 'LastName', type: TYPES.NVarChar, val: userData.LastName });
-            parameters.push({ name: 'UserRole', type: TYPES.NVarChar, val: userData.UserRole });
+            parameters.push({ name: 'UserRole', type: TYPES.NVarChar, val: userData.UserRole.toString().toLowerCase().replace(/ +/g, "") });
             parameters.push({ name: 'Email', type: TYPES.NVarChar, val:userData.Email });
             parameters.push({ name: 'UserPassword', type: TYPES.NVarChar, val: userData.UserPassword });
             parameters.push({ name: 'UserCreditCard', type: TYPES.NVarChar, val: userData.UserCreditCard });

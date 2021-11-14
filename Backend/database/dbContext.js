@@ -49,7 +49,7 @@ function queryGetExecute(qry, params, isMultiSet, callback) {
     var dataset = [];
     var resultset = 0;
 
-    console.log('hi')
+    
     request = new Request(qry, function (err, rowCount) {
         utility.sendDbResponse(err, rowCount, dataset, callback);
 
