@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Main from './components/Main';
 import {BrowserRouter} from 'react-router-dom';
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+//import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 
 //App Component
