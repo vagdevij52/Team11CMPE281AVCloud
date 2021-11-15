@@ -8,6 +8,8 @@ import Navheader from '../Navbar/navbar';
 import Button from 'react-bootstrap/Button';
 import { Form, Image } from 'react-bootstrap';
 import '../Navbar/navbar.css';
+import '../Constants'
+import { url } from '../Constants';
 
 const saltRounds = 10;
 
@@ -24,6 +26,9 @@ class Signup extends Component {
       emailerrors: '',
       passworderrors: '',
       redirecttohome: null,
+      carColor:'',
+      carNo:'',
+      carType:''
     };
 
     // Bind the handlers to this class
@@ -32,9 +37,29 @@ class Signup extends Component {
     this.userroleChangeHandler = this.userroleChangeHandler.bind(this);
     this.emailChangeHandler = this.emailChangeHandler.bind(this);
     this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
+    this.carNoChangeHandler = this.carNoChangeHandler.bind(this);
+    this.carColorChangeHandler = this.carColorChangeHandler.bind(this);
+    this.carTypeChangeHandler = this.carTypeChangeHandler.bind(this);
     this.submitsignup = this.submitsignup.bind(this);
   }
 
+  carNoChangeHandler = (e) => {
+    this.setState({
+      carNo: e.target.value,
+    });
+  }
+
+  carColorChangeHandler = (e) => {
+    this.setState({
+      carColor: e.target.value,
+    });
+  }
+
+  carTypeChangeHandler = (e) => {
+    this.setState({
+      carType: e.target.value,
+    });
+  }
   firstnameChangeHandler = (e) => {
     this.setState({
       firstname: e.target.value,
@@ -49,6 +74,9 @@ class Signup extends Component {
     this.setState({
       userrole: e.target.value,
     });
+    
+    if(e.target.value == 'Car Owner')
+      document.getElementById("divOwnerFields").style.display = '';
   };
 
   emailChangeHandler = (e) => {
@@ -114,29 +142,80 @@ class Signup extends Component {
 
   // submit Login handler to send a request to the node backend
   submitsignup = async (e) => {
+   
     // prevent page from refresh
     e.preventDefault();
     const formisvalidated = this.isformvalid();
     console.log(formisvalidated);
     if (formisvalidated) {
-      const { firstname, lastname, userrole, email, password } = this.state;
+      const { firstname, lastname, userrole, email, password, carType, carNo, carColor} = this.state;
+     
       const data = {
-        firstname,
-        lastname,
-        userrole,
-        email,
-        encryptpassword: await bcrypt.hash(password, saltRounds),
-      };
+        // firstname,
+        // lastname,
+        // userrole,
+        // email,        
+        // encryptpassword: await bcrypt.hash(password, saltRounds),
+        FirstName:this.state.firstname,
+        LastName:this.state.lastname,
+        UserRole:this.state.userrole,
+        Email: this.state.email,
+        UserPassword:await bcrypt.hash(this.state.password, saltRounds),
+        UserCreditCard:"",
+        UserPhone:"",
+        ProfilePicture:null
+      }
+      
+      alert("User created Successfully. Please Login");
+      this.props.history.push("/login");
+      return;
+      //alert("Hey");
+      var path = url;    
+      path += '/auth/register'; 
+      
       console.log(data);
       // set the with credentials to true
       axios.defaults.withCredentials = true;
       // make a post request with the user data
       axios
-        .post('http://localhost:3001/signup', data)
+        .post(path, data)
         .then((response) => {
           console.log('Status Code : ', response.status);
           if (response.status === 200) {
             console.log(response.data);
+
+            if(this.state.userrole == 'Car Owner')
+            {
+              const data1 = {
+                VehicleNum :this.state.carNo,
+                VehicleModel: this.state.carType,
+                VehicleMake:"LUCID",
+                VehicleColor: this.state.carColor,
+                VehicleMileage:50,
+                VehicleSize:"560",
+                VehicleScheduleStatus:"scheduled",
+                VehicleStatus:"active",
+                VehicleSeatingCapacity:5,
+                VehicleDistanceDriven:80,
+                VehicleApprovalStatus:"approved",
+                VehicleOwnerID:59
+
+              }
+
+              // const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzY4ODU5OTksImlhdCI6MTYzNjgzMTk5OSwic3ViIjo1OX0.-IqykhJjdHxGQg81HvcmZ22Y1jXG9yBpvOnj9b5Mx8I';
+              // axios.defaults.headers.common = {'Authorization': `Bearer ${token}`};
+              // axios
+              // .post(url + "/owner/vehicles", data)
+              // .then((response) => {
+              // }).catch((err) => {
+              //   console.log(err.response);
+              //   alert(err.response.data);
+              //   this.setState({
+              //     errorMessage: err.response.data,
+              //   });
+              // });
+            }
+            
             console.log(response.data.username);
             const resuserid = response.data.UserID;
             const resfirstname = response.data.FirstName;
@@ -180,17 +259,17 @@ class Signup extends Component {
             {redirectVar}
             {redirecttohome}
             <div className='signup-form'>
-              <div className='main-div'>
-                <div className='panel'>
+              <div className='main-div' style = {{borderRadius:"15px", background:"#eeeeee"}}>
+                <div className='panel' style = {{width: "106%", marginLeft: "-5%", borderRadius: "12px"}}>
                   <h2>WELCOME TO AUTONOMOUS CAR RENTAL SERVICES!</h2>
                   <br />
                   <br />
                 </div>
                 <div className='form-group'>
-                  <h3>Introduce Yourself</h3>
+                  <h3 style = {{}}>Introduce Yourself</h3>
                   <br />
                   <br />
-                  <label htmlFor='username'>
+                  <label htmlFor='username' style = {{}}>
                     Hi there! <br />
                     My First name is
                     <input
@@ -210,7 +289,7 @@ class Signup extends Component {
                       {firstnameerrors}{' '}
                     </span>
                   )}
-                  <label htmlFor='username'>
+                  <label htmlFor='username' style = {{}}>
                     My Last Name is
                     <input
                       type='text'
@@ -224,7 +303,7 @@ class Signup extends Component {
                   </label>
                   <br />
 
-                  <br />
+                 
                 </div>
                 <div className='form-group'>
                   <label htmlFor='username'>
@@ -269,7 +348,7 @@ class Signup extends Component {
                     </span>
                   )}
                   <br />
-                  <br />
+                
                   <Form.Group controlId='userrole'>
                     <Form.Label>Here's my role</Form.Label>
                     <Form.Control
@@ -277,15 +356,24 @@ class Signup extends Component {
                       value={userrole}
                       placeholder={userrole}
                       onChange={this.userroleChangeHandler}
+                      style = {{marginLeft: "15%", width: "71%"}}
                     >
-                      <option value='Customer'>Customer</option>
+                      <option value='Customer'>User</option>
                       <option value='Car Owner'>Car Owner</option>
                       <option value='System Administrator'>
                         System Administrator
                       </option>
-                    </Form.Control>
+                    </Form.Control>                   
                   </Form.Group>
+                  <div id = "divOwnerFields" style = {{display: "none"}}>
+                  <label>Your Car No.</label><br/>
+                   <input type = "text" id = "txtCarNo" placeholder = "Car No." onChange={this.carNoChangeHandler}></input><br/>
+                   <label>Your Car Color</label><br/>
+                  <input type = "text" id = "txtCarNo" placeholder = "Car Color" onChange={this.carColorChangeHandler}></input>
                   <br />
+                  <label>Select your Car Type</label><br/>
+                  <input type = "text" id = "txtCarNo" placeholder = "Car Type" onChange={this.carTypeChangeHandler}></input>
+                  </div>
                 </div>
                 <button
                   type='submit'

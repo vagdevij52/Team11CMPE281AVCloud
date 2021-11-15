@@ -17,7 +17,7 @@
 }
 
 #tblCarInfo {
-    border-collapse: separate;
+    border-collapse: collapse ;
     border-spacing: 65px 0;
 }
 #tblRidesTaken {
@@ -30,11 +30,19 @@
   }
 
 #tblCarInfoAdmin td {
-    padding-right: 100px;
+    padding-right: 140px;
 }
 
   #tblCarInfoAdmin tr:last-child { 
     border-bottom: none; 
+}
+
+#tblUserInfoAdmin td {
+  padding-right: 140px;
+}
+
+#tblUserInfoAdmin tr:last-child { 
+  border-bottom: none; 
 }
 
 
@@ -44,4 +52,12 @@
 
   #tblRidesTakenAdmin tr:last-child { 
     border-bottom: none; 
+}
+
+#tblCarInfo td {
+  padding-right: 140px;
+}
+
+#tblCarInfo tr:last-child { 
+  border-bottom: none; 
 }

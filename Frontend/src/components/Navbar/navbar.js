@@ -34,14 +34,14 @@ class Navheader extends Component {
             </Button>
           </li>
           <li>
-            <Image
+            {/* <Image
               src={profilepic}
               className='avatar'
               alt='profile pic'
               roundedCircle
-            />
+            /> */}
           </li>
-          <li>
+          <li style = {{paddingTop : "18px"}}>
             Hi, {sessionStorage.getItem('username')}{' '}
             {/* <Dropdown id='nav-dropdown' default>
               Hi, {sessionStorage.getItem('username')}{' '}
@@ -60,12 +60,12 @@ class Navheader extends Component {
               </Dropdown.Menu>
             </Dropdown> */}
           </li>
-          <li>
+          <li style = {{paddingTop : "3px"}}>
             <Link className='nav-link1' to='/profile'>
               My Profile{' '}
             </Link>
           </li>
-          <li>
+          <li style = {{paddingTop : "3px"}}>
             <Link className='logout-class' to='/' onClick={this.handleLogout}>
               Logout
             </Link>
