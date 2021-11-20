@@ -9,10 +9,8 @@ var response = require('../utils/response');
 const dbContext = require('../database/dbContext');
 const APIError = require('../errors/api-error');
 const { transform } = require('../models/user/user.model');
-const SensorData = require('../models/sensordata.model');
-const mongoose = require("mongoose");
 const { MongoClient } = require('mongodb');
-const uri = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
+
 /**
  * Get user ride history details
  * @apiParam  {INT}        userid     User's ID
@@ -49,7 +47,7 @@ exports.editProfile = async (req, res, next) => {
     //const updatedUser = omit(req.body, ommitRole);
     const updatedUser = await Admin.user(req.body);
      // const userDtls = await Admin.user(req.body);
-    console.log(updatedUser);
+    //console.log(updatedUser);
     const userId = req.params.userId;
     //const user = Object.assign(req.locals.user, updatedUser);
     //const userExists = await Admin.getUser(userid);
@@ -260,7 +258,7 @@ exports.deleteRide = async (req, res, next) => {
     try {
         //first check if ride id exists and then delete it
         const getRideDtls = await Admin.getRideById(req.params.rideId, false);
-        console.log(getRideDtls);
+        //console.log(getRideDtls);
         if (getRideDtls.RideID) {
             const rides = await Admin.deleteRide(req.params.rideId);
             if (rides) {

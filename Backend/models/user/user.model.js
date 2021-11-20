@@ -163,7 +163,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
     var parameters=[]; 
     var vehicleID="";  
-    console.log("here");
+
     //var sql1 = "SELECT top 1 * from VEHICLEDETAILS WHERE VehicleType= '"+rideDetails.RideVehicleType+"' AND VehcileScheduleStatus='idle'";
     var sql1 = "SELECT top 1 VehcileID from VEHICLEDETAILS WHERE VehicleType= 'sedan' AND VehcileScheduleStatus='idle'";
     dbContext.getQuery(sql1, parameters,false, function (err, data, fields) {
@@ -172,7 +172,7 @@ module.exports = {
      // console.log(JSON.stringify(data[0]));
       if(data==null || data[0]==null) reject(callback(err));
       vehicleID=data[0].VehcileID;
-      console.log(vehicleID);
+      
       parameters.push({ name: 'RideStartTime', type: TYPES.DateTime, val: rideDetails.RideStartTime });
      // parameters.push({ name: 'RideEndTime', type: TYPES.DateTime, val: rideDetails.RideEndTime });
       parameters.push({ name: 'RideVehicleID', type: TYPES.Int, val: vehicleID });

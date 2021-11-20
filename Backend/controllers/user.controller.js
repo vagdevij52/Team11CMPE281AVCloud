@@ -131,7 +131,7 @@ exports.scheduleTrip = async (req, res, next) => {
     // const { user } = req.locals;
     const newRide = new User.rideData(req.body);
     // const userId=req.params.userId;
-    console.log(newRide);
+    //console.log(newRide);
     await User.scheduleRide(newRide, (data) => {
       ////console.log("done "+ data);
       //  ////console.log("donne"+user.FirstName);
@@ -172,7 +172,7 @@ exports.editUserProfile = async (req, res, next) => {
   // const ommitRole = req.locals.user.role !== 'admin' ? 'role' : '';
   //const updatedUser = omit(req.body, ommitRole);
   const updatedUser = new User.userModel(req.body);
-  console.log(updatedUser);
+ // console.log(updatedUser);
   const userId = req.params.userId;
   //const user = Object.assign(req.locals.user, updatedUser);
   //const userExists = await Admin.getUser(userid);
