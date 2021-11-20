@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Dropdown, Button, Nav, Navbar,Container, Row, Col} from 'react-bootstrap';
+import {Dropdown, Button, Navbar, Nav, Container, Row, Col} from 'react-bootstrap';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import cookie from 'react-cookies';
@@ -7,47 +7,51 @@ import { Link } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 
 
+function EditDeleteRidesAdmin(){
 
-function EditDeleteUsersAdmin(){
+    function getAllRides(){
 
-    function getAllUsers(){
-        axios.get("http://localhost:3001/admin/users",{
+        axios.get("http://localhost:3001/admin/rides",{
             headers:{
               'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzY4MzU2NjIsImlhdCI6MTYzNjc4MTY2Miwic3ViIjo1M30.fYfotgf91fZByYXceLaQw7IyAzupV9ftAFSHMIPAJb8"  
             }
         })
         .then((response)=>{
-            console.log(response.data);
-            changeAllUsers(response.data);
+            console.log(response.data.data);
+            changeAllRides(response.data.data);
+            
         })
         .catch((error)=>{
             console.log(error);
         })
     }
 
-    const deleteUser =  async(event)=>{
+    const deleteRide =  async(event)=>{
 
-        console.log("User being deleted is",user);
+        console.log("Ride being deleted is",ride);
+        if(ride.RideID != -1){
+            const RideID = ride;
+            console.log(RideID);
+            if(ride.RideStatus === "booked" || ride.RideStatus === "completed"){ /// Checking status of rides
+                    const response = await axios.delete(`http://localhost:3001/admin/rides/${RideID}`,{
+                    headers:{
+                        'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzY4MzU2NjIsImlhdCI6MTYzNjc4MTY2Miwic3ViIjo1M30.fYfotgf91fZByYXceLaQw7IyAzupV9ftAFSHMIPAJb8"  
+                    }}
+                )
+                console.log(response.status);
+                if(response.status == 200){
+                    console.log(response.data);
+                    changeResult("Ride has been deleted!");
+                }
 
-        if(user != -1){
-            const userId = user;
-            console.log(userId);
-            const response = await axios.delete(`http://localhost:3001/admin/user/${userId}`,{
-                headers:{
-                    'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzY4MzU2NjIsImlhdCI6MTYzNjc4MTY2Miwic3ViIjo1M30.fYfotgf91fZByYXceLaQw7IyAzupV9ftAFSHMIPAJb8"  
-                }}
-            )
-            console.log(response.status);
-            console.log(response.data);
+                if(response.status == 400){
+                    changeResult("Ride could not be deleted!");
+                } 
 
-            if(response.status == 200){
-                console.log("user has been deleted");
+            }else{
+                changeResult("You can  only delete rides which are booked or completed");
             }
-
-            if(response.status == 400){
-                console.log("User cannot be deleted");
-            }
-
+                   
 
         }else{
             console.log("First select in the dropdown ");
@@ -55,14 +59,12 @@ function EditDeleteUsersAdmin(){
 
     }
 
-    
-
-
-    const[allUsers, changeAllUsers] = useState([]);
-    const[user, changeUser] = useState(-1);
+    const[allRides, changeAllRides] = useState([]);
+    const[ride, changeRide] = useState({});
+    const[result, changeResult] = useState("");
 
     useEffect(()=>{
-        getAllUsers();
+        getAllRides();
     },[])
 
     let isloggedin = null;
@@ -132,7 +134,7 @@ function EditDeleteUsersAdmin(){
         </ul>
       );
     }
-    
+   
 
     return (
         <div>
@@ -148,27 +150,28 @@ function EditDeleteUsersAdmin(){
                 </Navbar.Collapse>
             </Navbar>
 
-            <Row>
-                <Col></Col>
-                <Col>
+            <Container>
                 <Row>
+                    <Col></Col>
+                    <Col>
+                    <Row>
                     <Dropdown>
                         <Dropdown.Toggle variant = "success" id="dropdown-basic">
-                        Select user to delete
+                        Select rides to delete
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
 
-                        {allUsers.map((user)=>(
+                        {allRides.map((ride)=>(
                             <Dropdown.Item 
+                            value ={ride.RideID}
                             onClick={(event)=>{
-                                console.log(user.UserID);
-                                changeUser(user.UserID);
-                    
+                                console.log(ride.RideID);
+                                changeRide(ride);
                             }}
 
                             >
-                              User ID : {user.UserID}  
+                                Ride ID:{ride.RideID}
                             </Dropdown.Item>
                         ))}
 
@@ -177,21 +180,24 @@ function EditDeleteUsersAdmin(){
                     </Dropdown>
 
                     <Button onClick={(event)=>{
-                        deleteUser(event);
+                        deleteRide(event);
                     }}>
                         Delete
-                    </Button> 
-                </Row> 
-                </Col>
-                <Col></Col>
-            </Row>
+                    </Button>
+                    {result} 
+                    </Row>
+                    </Col>
+                    <Col></Col>
+                </Row>
+            </Container>
+
             
         </div>
       
     );
 }
   
-export default EditDeleteUsersAdmin;
+export default EditDeleteRidesAdmin;
 
 
 
