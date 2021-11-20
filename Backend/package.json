@@ -49,6 +49,8 @@
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "4.0.0",
     "react-scripts": "^4.0.3",
+    "socket.io": "^4.4.0",
+    "socket.io-client": "^4.4.0",
     "tedious": "^14.0.0",
     "uuid": "^3.1.0",
     "winston": "^3.1.0"
