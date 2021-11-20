@@ -22,15 +22,16 @@ if (env === 'development') {
  * @returns {object} Mongoose connection
  * @public
  */
-exports.connect = () => {
-  mongoose
-    .connect(mongo.uri, {
-      useCreateIndex: true,
-      keepAlive: 1,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-    })
-    .then(() => console.log('mongoDB connected...'));
-  return mongoose.connection;
-};
+// const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+// exports.connect = () => {
+//   mongoose.connect(uri, {
+//     useNewUrlParser: true
+// }).then(() => {
+//     console.log("Mongo DB CONNECTED");
+// }).catch(console.log("DB CONNECTED FAILED"))
+//   return mongoose.connection;
+// };
+
+
+
+

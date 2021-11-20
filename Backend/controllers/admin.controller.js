@@ -9,6 +9,10 @@ var response = require('../utils/response');
 const dbContext = require('../database/dbContext');
 const APIError = require('../errors/api-error');
 const { transform } = require('../models/user/user.model');
+const SensorData = require('../models/sensordata.model');
+const mongoose = require("mongoose");
+const { MongoClient } = require('mongodb');
+const uri = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
 /**
  * Get user ride history details
  * @apiParam  {INT}        userid     User's ID
@@ -40,6 +44,34 @@ exports.getVehiclesList = async (req, res, next) => {
         return next(error);
     }
 };
+exports.editProfile = async (req, res, next) => {
+    // const ommitRole = req.locals.user.role !== 'admin' ? 'role' : '';
+    //const updatedUser = omit(req.body, ommitRole);
+    const updatedUser = await Admin.user(req.body);
+     // const userDtls = await Admin.user(req.body);
+    console.log(updatedUser);
+    const userId = req.params.userId;
+    //const user = Object.assign(req.locals.user, updatedUser);
+    //const userExists = await Admin.getUser(userid);
+    const userExists = await Admin.getUser(userId);
+    if (userExists) {
+      const userUpdate = await User.editUserProfile(updatedUser,userId);
+  
+      if (userUpdate) {
+        res.status(httpStatus.OK);
+        return res.json(userUpdate);
+      }
+      throw new APIError({
+        status: httpStatus.BAD_REQUEST,
+        message: 'No user data available',
+      });
+    } else {
+      return res.json({
+        msg: 'failure! user not found'
+      });
+    }
+  
+  };
 exports.editUser = async (req, res, next) => {
     try {
         const userid = req.params.userId;
@@ -227,7 +259,7 @@ exports.getAllRidesList = async (req, res, next) => {
 exports.deleteRide = async (req, res, next) => {
     try {
         //first check if ride id exists and then delete it
-        const getRideDtls = await Admin.getRideById(req.params.rideId,false);
+        const getRideDtls = await Admin.getRideById(req.params.rideId, false);
         console.log(getRideDtls);
         if (getRideDtls.RideID) {
             const rides = await Admin.deleteRide(req.params.rideId);
@@ -253,7 +285,7 @@ exports.deleteRide = async (req, res, next) => {
 exports.cancelRide = async (req, res, next) => {
     try {
         //first check if ride id exists and then delete it
-        const getRideDtls = await Admin.getRideById(req.params.rideId,true);
+        const getRideDtls = await Admin.getRideById(req.params.rideId, true);
         if (getRideDtls.RideID) {
             const rides = await Admin.cancelRide(req.params.rideId);
             if (rides) {
@@ -274,4 +306,22 @@ exports.cancelRide = async (req, res, next) => {
     } catch (error) {
         return next(error);
     }
+};
+exports.getSensorData = async (req, res, next) => {
+
+   
+
+ const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+
+MongoClient.connect(uri, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("AVCLOUD");
+    //Find all documents in the customers collection:
+    dbo.collection("SensorData").find({}).toArray(function(err, result) {
+      if (err) throw err;
+       res.json(result);
+      db.close();
+    });
+  });
+  
 };

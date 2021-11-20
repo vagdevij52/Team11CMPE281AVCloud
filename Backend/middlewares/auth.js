@@ -12,11 +12,9 @@
  const Promise=require('bluebird');
  var user={};
 const handleJWT = (req, res, next, roles) =>async (err, uer, info) => {
- ////console.log(req);
-  ////console.log(res);
-  //console.log(roles);
+
   const error = err || info;
-  //console.log(user);
+ 
   const logIn = Promise.promisify(req.logIn);
   const apiError = new APIError({
     message: error ? error.message : 'Unauthorized',
@@ -34,11 +32,10 @@ const handleJWT = (req, res, next, roles) =>async (err, uer, info) => {
     }
     await logIn(user, { session: false });
   } catch (e) {
-    //console.log("erro "+e);
+ 
     return next(apiError);
   }
- //console.log("roles"+roles);
- //console.log("ur"+user.UserRole);
+
   if (roles === LOGGED_USER) {
     if (user.UserRole === 'user' && req.params.userId !== user.UserID.toString()) {
       apiError.status = httpStatus.FORBIDDEN;
@@ -71,7 +68,7 @@ const handleJWT = (req, res, next, roles) =>async (err, uer, info) => {
   }
 
   req.user = user;
-  //console.log(req.user);
+ 
   return next();
 };
 

@@ -42,6 +42,7 @@ exports.register = async (req, res, next) => {
 
     if (user) {
       res.status(httpStatus.OK);
+      req.user = user;
       return res.json(user);
     }
     throw new APIError({

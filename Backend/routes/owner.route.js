@@ -81,9 +81,12 @@ router
      * @apiError (Forbidden 403)     Forbidden        Only admins can create the data
      */
     .get(authorize(CAR_OWNER), controller.getVehicleById)
-    .put(authorize(CAR_OWNER), validate(editVehicle), controller.editVehicle)
-    .post(authorize(CAR_OWNER), validate(createVehcl), controller.createVehicleById)
+    .put(authorize(CAR_OWNER), validate(editVehicle), controller.editVehicle)    
     .delete(authorize(CAR_OWNER), validate(editVehicle), controller.deleteVehicle);
 ;
+router
+    .route('/vehicles/:userId?')
+    .post(validate(createVehcl), controller.createVehicleById)
+
 
 module.exports = router;
