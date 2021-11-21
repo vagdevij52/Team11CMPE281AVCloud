@@ -37,7 +37,7 @@ module.exports = {
             VehcileColor,
             VehcileMileage,
             VehcileSize,
-            VehcileScheduleStatus,
+            VehicleScheduleStatus,
             VehcileStatus,
             VehcileSeatingCapacity,
             VehcileDistanceDriven,
@@ -146,13 +146,14 @@ module.exports = {
             parameters.push({ name: 'VehcileColor', type: TYPES.NVarChar, val: vehicleData.VehicleColor });
             parameters.push({ name: 'VehcileMileage', type: TYPES.Float, val: vehicleData.VehicleMileage });
             parameters.push({ name: 'VehcileSize', type: TYPES.NChar, val: vehicleData.VehicleSize });
-            parameters.push({ name: 'VehcileScheduleStatus', type: TYPES.NVarChar, val: vehicleData.VehcileScheduleStatus });
+            parameters.push({ name: 'VehcileScheduleStatus', type: TYPES.NVarChar, val: vehicleData.VehicleScheduleStatus });
             parameters.push({ name: 'VehcileStatus', type: TYPES.NVarChar, val: vehicleData.VehicleStatus });
             parameters.push({ name: 'VehcileSeatingCapacity', type: TYPES.Int, val: vehicleData.VehicleSeatingCapacity });
             parameters.push({ name: 'VehcileDistanceDriven', type: TYPES.Float, val: vehicleData.VehicleDistanceDriven });
             parameters.push({ name: 'VehcileApprovalStatus', type: TYPES.NVarChar, val: vehicleData.VehicleApprovalStatus });
             parameters.push({ name: 'VehicleOwnerID', type: TYPES.Int, val: ownerId });
-            var sql = "INSERT INTO dbo.VEHICLEDETAILS(VehcileNum,VehcileModel,VehcileMake,VehcileColor,VehcileMileage,VehcileSize,VehcileScheduleStatus,VehcileStatus,VehcileSeatingCapacity,VehcileDistanceDriven,VehcileApprovalStatus,VehicleOwnerID) values(@VehcileNum,@VehcileModel,@VehcileMake,@VehcileColor,@VehcileMileage,@VehcileSize,@VehcileScheduleStatus,@VehcileStatus,@VehcileSeatingCapacity,@VehcileDistanceDriven,@VehcileApprovalStatus,@VehicleOwnerID);select @@identity as VehicleID;";
+            parameters.push({ name: 'VehicleType', type: TYPES.NVarChar, val: vehicleData.VehicleType });
+            var sql = "INSERT INTO dbo.VEHICLEDETAILS(VehcileNum,VehcileModel,VehcileMake,VehcileColor,VehcileMileage,VehcileSize,VehcileScheduleStatus,VehcileStatus,VehcileSeatingCapacity,VehcileDistanceDriven,VehcileApprovalStatus,VehicleOwnerID,VehicleType) values(@VehcileNum,@VehcileModel,@VehcileMake,@VehcileColor,@VehcileMileage,@VehcileSize,@VehcileScheduleStatus,@VehcileStatus,@VehcileSeatingCapacity,@VehcileDistanceDriven,@VehcileApprovalStatus,@VehicleOwnerID,@VehicleType);select @@identity as VehicleID;";
             dbContext.getQuery(sql, parameters, false, function (error, data) {
                 if (data) {
                     resolve({ msg: 'success', data });

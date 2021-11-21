@@ -12,6 +12,7 @@ var TYPES = require('tedious').TYPES;
 var response = require('../../utils/response');
 var Promise = require('bluebird');
 const { request } = require('express');
+const { json } = require('body-parser');
 
 /**
 * User Roles
@@ -99,7 +100,10 @@ module.exports = {
       UserPassword:userDetails.UserPassword,
       UserCreditCard:userDetails.UserCreditCard,
       UserPhone:userDetails.UserPhone,
-      ProfilePicture:userDetails.ProfilePicture     
+      ProfilePicture:userDetails.ProfilePicture,
+      Gender:userDetails.Gender,
+      Birthday:userDetails.Birthday,
+     // UserName:data.UserName    
     };
     return user;
   
@@ -144,36 +148,74 @@ module.exports = {
      const rideDtls={
     RideStartTime:rideDetails.RideStartTime,
     RideEndTime:rideDetails.RideEndTime,
-    RideVehicleID:rideDetails.RideVehicleID,
+  //  RideVehicleID:rideDetails.RideVehicleID,
     RideOrigin:rideDetails.RideOrigin,
     RideDestination:rideDetails.RideDestination,
     RideCustomerID:rideDetails.RideCustomerID,
     RideDistance:rideDetails.RideDistance,
     RideAmount:rideDetails.RideAmount,
-    RideStatus:rideDetails.RideStatus
+    RideStatus:rideDetails.RideStatus,
+    RideVehicleType:rideDetails.VehicleType
      };
      return rideDtls;
   },
   scheduleRide: function (rideDetails, callback) {
     return new Promise((resolve, reject) => {
-    var parameters=[];   
-    //console.log(rideDetails);
-    parameters.push({ name: 'RideStartTime', type: TYPES.DateTime, val: rideDetails.RideStartTime });
-   // parameters.push({ name: 'RideEndTime', type: TYPES.DateTime, val: rideDetails.RideEndTime });
-    parameters.push({ name: 'RideVehicleID', type: TYPES.Int, val: rideDetails.RideVehicleID });
-    parameters.push({ name: 'RideOrigin', type: TYPES.NVarChar, val: rideDetails.RideOrigin });
-    parameters.push({ name: 'RideDestination', type: TYPES.NVarChar, val: rideDetails.RideDestination });
-    parameters.push({ name: 'RideCustomerID', type: TYPES.Int, val: rideDetails.RideCustomerID });
-    parameters.push({ name: 'RideDistance', type: TYPES.Float, val: rideDetails.RideDistance });
-    parameters.push({ name: 'RideAmount', type: TYPES.Float, val: rideDetails.RideAmount });
-    parameters.push({ name: 'RideStatus', type: TYPES.NVarChar, val: 'booked' });
-    var sql = "INSERT INTO AVCLOUD.dbo.VEHICLERIDEDETAILS(RideStartTime,RideVehicleID,RideOrigin,RideDestination,RideCustomerID,RideDistance,RideAmount,RideStatus) values(@RideStartTime,@RideVehicleID,@RideOrigin,@RideDestination,@RideCustomerID,@RideDistance,@RideAmount,@RideStatus);SELECT @@identity as RideID";
-    dbContext.query(sql, parameters,false, function (err, data, fields) {
-      if (err) reject(callback(err));     
-      resolve(callback(data));
+    var parameters=[]; 
+    var vehicleID="";  
+
+    //var sql1 = "SELECT top 1 * from VEHICLEDETAILS WHERE VehicleType= '"+rideDetails.RideVehicleType+"' AND VehcileScheduleStatus='idle'";
+    var sql1 = "SELECT top 1 VehcileID from VEHICLEDETAILS WHERE VehicleType= 'sedan' AND VehcileScheduleStatus='idle'";
+    dbContext.getQuery(sql1, parameters,false, function (err, data, fields) {
+    //  if (err) console.log(err); 
+    //  var jsondata=JSON.stringify(data[0]);
+     // console.log(JSON.stringify(data[0]));
+      if(data==null || data[0]==null) reject(callback(err));
+      vehicleID=data[0].VehcileID;
+      
+      parameters.push({ name: 'RideStartTime', type: TYPES.DateTime, val: rideDetails.RideStartTime });
+     // parameters.push({ name: 'RideEndTime', type: TYPES.DateTime, val: rideDetails.RideEndTime });
+      parameters.push({ name: 'RideVehicleID', type: TYPES.Int, val: vehicleID });
+      parameters.push({ name: 'RideOrigin', type: TYPES.NVarChar, val: rideDetails.RideOrigin });
+      parameters.push({ name: 'RideDestination', type: TYPES.NVarChar, val: rideDetails.RideDestination });
+      parameters.push({ name: 'RideCustomerID', type: TYPES.Int, val: rideDetails.RideCustomerID });
+      parameters.push({ name: 'RideDistance', type: TYPES.Float, val: rideDetails.RideDistance });
+      parameters.push({ name: 'RideAmount', type: TYPES.Float, val: rideDetails.RideAmount });
+      parameters.push({ name: 'RideStatus', type: TYPES.NVarChar, val: 'booked' });
+      sql = "INSERT INTO AVCLOUD.dbo.VEHICLERIDEDETAILS(RideStartTime,RideVehicleID,RideOrigin,RideDestination,RideCustomerID,RideDistance,RideAmount,RideStatus) values(@RideStartTime,@RideVehicleID,@RideOrigin,@RideDestination,@RideCustomerID,@RideDistance,@RideAmount,@RideStatus);SELECT @@identity as RideID;UPDATE AVCLOUD.dbo.VEHICLEDETAILS SET VehcileScheduleStatus='booked' WHERE VehcileID="+vehicleID+"";
+     // console.log("what");
+      dbContext.query(sql, parameters,false, function (err, data, fields) {
+        if (err) reject(callback(err));     
+        resolve(callback(data));
+      });
     });
+    
   });
   },
+  async editUserProfile(userData,userId) {        
+    return new Promise((resolve, reject) => {
+        var parameters = [];         
+        parameters.push({ name: 'FirstName', type: TYPES.NVarChar, val: userData.FirstName });
+        parameters.push({ name: 'LastName', type: TYPES.NVarChar, val: userData.LastName });
+       // parameters.push({ name: 'UserRole', type: TYPES.NVarChar, val: userData.UserRole });
+        //parameters.push({ name: 'Email', type: TYPES.NVarChar, val: userData.Email });
+      //  parameters.push({ name: 'UserPassword', type: TYPES.NVarChar, val: userData.UserPassword });
+        parameters.push({ name: 'Birthday', type: TYPES.Date, val: userData.Birthday });
+        parameters.push({ name: 'Gender', type: TYPES.NVarChar, val: userData.Gender });
+        parameters.push({ name: 'UserPhone', type: TYPES.NVarChar, val: userData.UserPhone });
+        parameters.push({ name: 'ProfilePicture', type: TYPES.NVarChar, val: userData.ProfilePicture });
+        parameters.push({ name: 'UserID', type: TYPES.Int, val: userId });
+        var sql = "UPDATE AVCLOUD.dbo.USERDETAILS SET FirstName=@FirstName,LastName=@LastName,UserPhone=@UserPhone,ProfilePicture=@ProfilePicture,Birthday=@Birthday,Gender=@Gender WHERE UserID=@UserID;select * FROM AVCLOUD.dbo.USERDETAILS WHERE UserID=@UserID;";
+        dbContext.getQuery(sql, parameters, false, function (error, data) {
+            if (data) {
+                resolve({ msg: 'success', data });
+            } else{
+                resolve({ msg: 'failed ' + error });
+                throw new APIError(error);
+            }
+        });
+    });
+},
   getUser: function (myID, callback) {
     return new Promise((resolve, reject) => {
     var parameters=[];    
@@ -224,28 +266,7 @@ module.exports = {
         //return callback({ user:data, accessToken: token()});
       });
   },
-  deleteUser: function (flowerID, callback) {
-    var sql = 'DELETE FROM flori WHERE id = ';
-    db.query(sql, flowerID, function (err, data) {
-      if (err) throw err;
-      return callback(data);
-    });
-  },
-  editUser: async function (editID, callback) {
-    var sql = `SELECT * FROM flori WHERE id= ?`;
-    db.query(sql, editID, function (err, data) {
-      if (err) throw err;
-      return callback(data[0]);
-    });
-  },
-  updateUser: function (updateFlower, myID, callback) {
-
-    var sql = `UPDATE flori SET ? WHERE id= ?`;
-    db.query(sql, [updateFlower, myID], function (err, data) {
-      if (err) throw err;
-      return callback(data);
-    });
-  },
+ 
   async get(id) {
     let user;
 

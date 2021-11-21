@@ -25,6 +25,19 @@ module.exports = {
                 .required(),
         }
     },
+    updateUser: {
+        body: {
+         // Email: Joi.string().email().required(),    
+          FirstName: Joi.string().max(128).required(),
+          LastName: Joi.string().max(128),
+          UserPhone:Joi.string().max(12).required(),
+         // role: Joi.string().valid(User.roles),
+         // mobile: Joi.number().min(10).max(10).required()
+        },
+        params: {
+          userId: Joi.number().required(),
+        },
+      },
     createUser:
     {
         body:
@@ -35,7 +48,7 @@ module.exports = {
                 .required(),
             UserRole: Joi.string()
                 .required(),
-            Email: Joi.string()
+            Email: Joi.string().email()
                 .required(),
             UserPassword: Joi.string()
                 .required(),

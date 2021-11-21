@@ -19,10 +19,9 @@ const { transform } = require('../models/user/user.model');
 exports.getRidesList = async (req, res, next) => {
     try {
         var userid = null;
-        //console.log(req.user);
+       
         if (req.user) {
-            //console.log(req.user);
-            //console.log(req.user.UserID);
+          
             userid = req.user.UserID;
         }
         if (!userid) {
@@ -93,14 +92,14 @@ exports.editVehicle = async (req, res, next) => {
 exports.createVehicleById = async (req, res, next) => {
     try {
         const vehicleDtls = await Admin.vehicle(req.body);
-        const vehicleId = req.params.vehicleId;
-        var userid = null;
-        //console.log(req.user);
-        if (req.user) {
-            ////console.log(req.user);
-            ////console.log(req.user.UserID);
-            userid = req.user.UserID;
-        }
+        const userid = req.params.userId;
+        //var userid = null;
+      //  console.log(req.user);
+        // if (req.user) {
+        //     ////console.log(req.user);
+        //     ////console.log(req.user.UserID);
+        //     userid = req.user.UserID;
+        // }
         if (!userid) {
             throw new APIError({
                 status: httpStatus.BAD_REQUEST,

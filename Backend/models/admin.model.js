@@ -25,7 +25,11 @@ module.exports = {
             UserPassword: data.UserPassword,
             UserCreditCard: data.UserCreditCard,
             UserPhone: data.UserPhone,
-            ProfilePicture: data.ProfilePicture
+            ProfilePicture: data.ProfilePicture,
+            Gender: data.Gender,
+            ProfilePicture: data.ProfilePicture,
+            Birthday: data.Birthday,
+            //UserName: data.UserName
         };
     },
     async vehicle(data) {
@@ -41,7 +45,8 @@ module.exports = {
             VehcileStatus,
             VehcileSeatingCapacity,
             VehcileDistanceDriven,
-            VehcileApprovalStatus
+            VehcileApprovalStatus,
+            VehcileType
         } = data;
     },
     async getUsersList() {
@@ -97,31 +102,31 @@ module.exports = {
             });
         });
     },
-    async createUser(userData) {
-
-        //console.log(userData.UserRole.toString().toLowerCase().replace(/ +/g, ""));
+    async createUser(userData) {        
         return new Promise((resolve, reject) => {
-            var parameters = [];
-            //const { firstname, lastname, role, email, password, creditcard, phone, profilepic } = userDetails;
+            var parameters = [];         
             parameters.push({ name: 'FirstName', type: TYPES.NVarChar, val: userData.FirstName });
             parameters.push({ name: 'LastName', type: TYPES.NVarChar, val: userData.LastName });
-            parameters.push({ name: 'UserRole', type: TYPES.NVarChar, val: userData.UserRole.toString().toLowerCase().replace(/ +/g, "") });
+            parameters.push({ name: 'UserRole', type: TYPES.NVarChar, val: userData.UserRole });
             parameters.push({ name: 'Email', type: TYPES.NVarChar, val: userData.Email });
             parameters.push({ name: 'UserPassword', type: TYPES.NVarChar, val: userData.UserPassword });
             parameters.push({ name: 'UserCreditCard', type: TYPES.NVarChar, val: userData.UserCreditCard });
             parameters.push({ name: 'UserPhone', type: TYPES.NVarChar, val: userData.UserPhone });
             parameters.push({ name: 'ProfilePicture', type: TYPES.NVarChar, val: userData.ProfilePicture });
-            //parameters.push({ name: 'token', type: TYPES.DateTime, val: role });
-            var sql = "INSERT INTO dbo.USERDETAILS(FirstName,LastName,UserRole,Email,UserPassword,UserCreditCard,UserPhone,ProfilePicture) values(@FirstName,@LastName,@UserRole,@Email,@UserPassword,@UserCreditCard,@UserPhone,@ProfilePicture);select @@identity as UserID;";
+            parameters.push({ name: 'Gender', type: TYPES.NVarChar, val: userData.Gender });
+            parameters.push({ name: 'Birthday', type: TYPES.NVarChar, val: userData.Birthday });
+           // parameters.push({ name: 'UserName', type: TYPES.NVarChar, val: userData.UserName });
+            var sql = "INSERT INTO dbo.USERDETAILS(FirstName,LastName,UserRole,Email,UserPassword,UserCreditCard,UserPhone,ProfilePicture,Gender,Birthday) values(@FirstName,@LastName,@UserRole,@Email,@UserPassword,@UserCreditCard,@UserPhone,@ProfilePicture,@Gender,@Birthday);select @@identity as UserID;";
             dbContext.getQuery(sql, parameters, false, function (error, data) {
                 if (data) {
                     resolve({ msg: 'success', data });
-                } else
+                } else{
                     resolve({ msg: 'failed ' + error });
-                // throw new APIError(error);
+                    throw new APIError(error);
+                }
             });
         });
-    },
+    },   
     async deleteUser(userId) {
         //console.log("dddd"+userId);
         return new Promise((resolve, reject) => {
@@ -292,7 +297,7 @@ module.exports = {
         });
     },
     async getRideById(rideId,isCancel) {
-        console.log("dddd"+rideId);
+      
         return new Promise((resolve, reject) => {
             var parameters = [];
             parameters.push({ name: 'RideID', type: TYPES.Int, val: rideId});
