@@ -3,6 +3,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var cors = require('cors');
+mongoose = require("mongoose");	
+cron = require("node-cron");
 const route = require('./routes/index');
 var config = require('./store/config.js');
 // const { dbconnection } = require('./store/config');
@@ -10,8 +12,8 @@ const multer = require('multer');
 const socketIO = require("socket.io");
 const http = require("http");
 app.set('view engine', 'ejs');
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-
+//app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors());
 app.use(
   session({
     secret: 'cmpe202',
@@ -21,84 +23,123 @@ app.use(
     activeDuration: 5 * 60 * 1000,
   })
 );
-const server = http.createServer(app);
-const io = socketIO(server);
-io.on("connection", socket => {
-  console.log("New client connected" + socket.id);
-  //console.log(socket);
-
-  // Returning the initial data of food menu from FoodItems collection
-  socket.on("initial_data", () => {
-    collection_foodItems.find({}).then(docs => {
-      io.sockets.emit("get_data", docs);
-    });
-  });
-  // Placing the order, gets called from /src/main/PlaceOrder.js of Frontend
-  socket.on("putOrder", order => {
-    collection_foodItems
-      .update({ _id: order._id }, { $inc: { ordQty: order.order } })
-      .then(updatedDoc => {
-        // Emitting event to update the Kitchen opened across the devices with the realtime order values
-        io.sockets.emit("change_data");
-      });
-  });
-
-  // Order completion, gets called from /src/main/Kitchen.js
-  socket.on("mark_done", id => {
-    collection_foodItems
-      .update({ _id: id }, { $inc: { ordQty: -1, prodQty: 1 } })
-      .then(updatedDoc => {
-        //Updating the different Kitchen area with the current Status.
-        io.sockets.emit("change_data");
-      });
-  });
-
-  // Functionality to change the predicted quantity value, called from /src/main/UpdatePredicted.js
-  socket.on("ChangePred", predicted_data => {
-    collection_foodItems
-      .update(
-        { _id: predicted_data._id },
-        { $set: { predQty: predicted_data.predQty } }
-      )
-      .then(updatedDoc => {
-        // Socket event to update the Predicted quantity across the Kitchen
-        io.sockets.emit("change_data");
-      });
-  });
-
-  // disconnect is fired when a client leaves the server
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
 
 app.use(bodyParser.json());
 
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET,HEAD,OPTIONS,POST,PUT,DELETE'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
-  );
-  res.setHeader('Cache-Control', 'no-cache');
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+//   res.setHeader('Access-Control-Allow-Credentials', 'true');
+//   res.setHeader(
+//     'Access-Control-Allow-Methods',
+//     'GET,HEAD,OPTIONS,POST,PUT,DELETE'
+//   );
+//   res.setHeader(
+//     'Access-Control-Allow-Headers',
+//     'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+//   );
+//   res.setHeader('Cache-Control', 'no-cache');
+//   next();
+// });
 
 require('./routes')(app);
+
+const server = require("http").createServer(app);
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    transports: ['websocket']
+  }
+});
+//const io = require("socket.io")(server);
+io.of("/socket").on("connection", (socket) => {
+  console.log("socket.io: User connected: ", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("socket.io: User disconnected: ", socket.id);
+  });
+  socket.on("connect_error", (err) => {
+    console.log(`connect_error due to ${err.message}`);
+  });
+
+});
+// io.on("connect_error", (err) => {
+//   console.log(`connect_error due to ${err.message}`);
+// });
+
+var URI = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?authSource=admin&replicaSet=atlas-8rtgw9-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true";
+URI = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
+//URI="mongodb://localhost:27017/AirlineApplication";
+//start the server
+server.listen(2001, () => console.log(`Server now running on port 2001!`));
+
+//connect to db
+mongoose.connect(URI, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+});
+const connection = mongoose.connection;
+
+connection.once("open", () => {
+  console.log("MongoDB database connected");
+
+  console.log("Setting change streams");
+  const rideChangeStream = connection.collection("RouteInfo").watch();
+  const sensorDataChangeStream = connection.collection("LiveSensorData").watch();
+  rideChangeStream.on("change", (change) => {
+    console.log("change stream called");
+    switch (change.operationType) {
+      case "insert":
+        console.log("insert stream called");
+        //console.log(change.fullDocument['Ride ID']);
+
+        console.log(change.fullDocument);
+        const ride = {
+          _id: change.fullDocument._id,
+          'Ride ID': change.fullDocument['Ride ID'],
+          'Road ID': change.fullDocument['Road ID'],
+          'Lane ID': change.fullDocument['Lane ID'],
+          'Location x': change.fullDocument['Location x'],
+          'Location y': change.fullDocument['Location y'],
+        };
+
+        io.of("/socket").emit("newRide", ride);
+        break;
+
+      case "delete":
+        io.of("/socket").emit("deletedRide", change.documentKey._id);
+        break;
+    }
+  });
+  sensorDataChangeStream.on("change", (change) => {
+    console.log("sensor change stream called");
+    switch (change.operationType) {
+      case "insert":
+        console.log("insert sensor stream called");
+        const sensorData = change.fullDocument.frame[0];
+        console.log(sensorData);
+        io.of("/socket").emit("newSensorData", sensorData);
+        break;
+    }
+  });
+});
+
+
+
+connection.on("error", (error) => console.log("Error: " + error));
+
 
 // app.listen(3001);
 // console.log('Server Listening on port 3001');
 
 // const dbconnection = mysql.createConnection(config.databaseOptions);
 
-app.listen(3001, () => {
-  console.log('Server Listening on port 3001');
-});
+// app.listen(3001, () => {
+//   console.log('Server Listening on port 3001');
+// });
 
 // module.exports = { app: app, dbconnection: dbconnection };
 module.exports = app;

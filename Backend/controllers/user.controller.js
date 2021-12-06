@@ -2,7 +2,7 @@ const { json } = require('body-parser');
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
 var Promise = require('bluebird');
-
+const { MongoClient } = require('mongodb');
 const User = Promise.promisifyAll(require('../models/user/user.model'));
 var TYPES = require('tedious').TYPES;
 var response = require('../utils/response');
@@ -195,6 +195,29 @@ exports.editUserProfile = async (req, res, next) => {
       msg: 'failure! user not found'
     });
   }
+
+};
+exports.getSensorData = async (req, res, next) => {
+  var rideId = req.params.rideId;
+  //const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+  const uri = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
+  MongoClient.connect(uri, function (err, db) {
+    if (err) throw err;
+    //var dbo = db.db("AVCLOUD");
+    var dbo = db.db("cmpe281");
+    //Find all documents in the customers collection:
+    //dbo.collection("LiveSensorData").find({ "Ride ID": 86 }).sort({ _id: -1 }).limit(1).toArray(function (err, result) {
+    dbo.collection("LiveSensorData").find({}).sort({ _id: -1 }).limit(1).toArray(function (err, result) {
+      if (err) throw err;
+      db.close();
+      return res.json({
+        success: true,
+        message: result[0]["frame"].filter(i=>i['Ride ID']==rideId),
+      });
+      //console.log(result);
+
+    });
+  });
 
 };
 

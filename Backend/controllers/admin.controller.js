@@ -305,6 +305,26 @@ exports.cancelRide = async (req, res, next) => {
         return next(error);
     }
 };
+exports.getAllRides = async (req, res, next) => {
+    try {
+
+        const rides = await Admin.getAllRidesData();
+
+        if (rides) {
+            return res.json({
+                success: true,
+                message: rides,
+            });
+        }
+
+    } catch (error) {
+        console.log("Error getting rides: ", error);
+        return res.json({
+            success: false,
+            message: "Error getting rides." + error,
+        });
+    }
+};
 exports.getSensorData = async (req, res, next) => {
 
    

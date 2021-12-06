@@ -115,6 +115,13 @@ router
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
   .post(authorize(LOGGED_USER), controller.scheduleTrip);
+  router
+  .route('/ride/:rideId')
+  .get(controller.getUserRideDetailsByRideID);
+router
+  .route('/sensordata/:rideId')
+  .get(controller.getSensorData);
+
 router
   .route('/:usrId')
   /**

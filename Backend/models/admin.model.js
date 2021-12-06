@@ -230,6 +230,18 @@ module.exports = {
             });
         });
     },
+    async getAllRidesData() {
+        return new Promise((resolve, reject) => {
+            var parameters = [];            
+            var sql = "SELECT top 10 vrd.*,vd.*,c.* FROM AVCLOUD.dbo.VEHICLERIDEDETAILS vrd JOIN AVCLOUD.dbo.VEHICLEDETAILS vd on vd.VehcileID=vrd.RideVehicleID JOIN AVCLOUD.dbo.USERDETAILS c on vrd.RideCustomerID=c.UserID WHERE RideStatus IS NOT NULL ORDER BY 1 DESC;";
+            dbContext.getQuery(sql, parameters, true, function (error, data) {
+                if (data) {
+                    resolve(data);
+                } else
+                    reject(error);
+            });
+        });
+    },
     async getUser(myID) {
         return new Promise((resolve, reject) => {
             var parameters = [];

@@ -15,6 +15,14 @@ import EditDeleteUsersAdmin from './EditDeleteUsersAdmin/EditDeleteUsersAdmin.js
 import AdminCharts from './PieCharts/PieCharts';
 import VehicleSensorInfo from './VehicleSensorInfo/VehicleSensorInfo'
 import carRepairInfo from './CarRepair/carRepair'
+import UserTrackingDashboard from './UserTrackingDashboard';
+import Map from './Map';
+import "tabler-react/dist/Tabler.css";
+import SensorData from "./SensorData";
+import Speedometer from "./Speedometer";
+import VehicleMotion from "./VehicleMotion";
+import AdminTrackingDashboard from "./admin/AdminTrackingDashboard";
+import TripStatus from "./TripStatus";
 
 //<Route path="/" component={Navbar}/>
 //<Route path="/login" component={Login}/>
@@ -39,7 +47,15 @@ class Main extends Component {
           <Route path='/admin-deleteUser' component = {EditDeleteUsersAdmin} />
           <Route path='/admin-charts' component = {AdminCharts} />          
           <Route path='/admin-AVSensorInfo' component = {VehicleSensorInfo} />          
-          <Route path='/carRepairInfo' component = {carRepairInfo} />          
+          <Route path='/carRepairInfo' component = {carRepairInfo} />  
+          <Route path="/userTrackingDashboard" exact component={UserTrackingDashboard} />  
+          <Route path="/RenderMap" exact component={MapContainer}/>   
+          <Route path="/map" exact component={Map}/>          
+          <Route path="/SensorData" exact component={SensorData}/>          
+          <Route path="/Speedometer" exact component={Speedometer}/>  
+          <Route path="/VehicleMotion" exact component={VehicleMotion}/>  
+          <Route path="/AdminTrackingDashboard" exact component={AdminTrackingDashboard}/>  
+          <Route path="/TripStatus" exact component={TripStatus}/>         
         </Switch>
       </div>
     );

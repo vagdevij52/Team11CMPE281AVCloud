@@ -261,6 +261,8 @@ router
    router
    .route('/profile/:userId')
    .put(authorize(ADMIN),validate(updateUser),controller.editProfile)
-   
+   router
+    .route("/track/getrides")
+    .get(controller.getAllRides);
 
   module.exports = router;
