@@ -38,7 +38,7 @@ export default class Direction extends React.Component {
         };
     }
     componentDidMount = async () => {
-        const socket = io("http://localhost:2001/socket", {
+        const socket = io("http://localhost:3001/socket", {
             transports: ['websocket']
         });
         socket.on("newSensorData", (sensordata) => {

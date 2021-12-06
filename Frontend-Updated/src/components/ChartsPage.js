@@ -156,9 +156,9 @@ export default class ChartsPage extends React.Component {
   }
   componentDidMount = async () => {
     //socket.io connection
-    // const socket = io(`http://localhost:2001/socket`);
+    // const socket = io(`http://localhost:3001/socket`);
 
-    const socket = io("http://localhost:2001/socket", {
+    const socket = io("http://localhost:3001/socket", {
       //withCredentials: true,
       transports: ['websocket']
       // extraHeaders: {

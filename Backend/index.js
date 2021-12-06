@@ -72,7 +72,7 @@ var URI = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?authSou
 URI = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
 //URI="mongodb://localhost:27017/AirlineApplication";
 //start the server
-server.listen(2001, () => console.log(`Server now running on port 2001!`));
+server.listen(3001, () => console.log(`Server now running on port 3001!`));
 
 //connect to db
 mongoose.connect(URI, {

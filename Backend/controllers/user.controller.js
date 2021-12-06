@@ -197,6 +197,28 @@ exports.editUserProfile = async (req, res, next) => {
   }
 
 };
+exports.getUserRideDetailsByRideID = async (req, res, next) => {
+  try {
+    const rideId = req.params.rideId;
+    //const rideExists = await Admin.getVehicle(rideId);
+
+    const ride = await User.getRideById(rideId);
+
+    if (ride) {
+      return res.json({
+        success: true,
+        message: ride,
+      });
+    }
+
+  } catch (error) {
+    console.log("Error getting ride by ID." + error);
+    return res.json({
+      success: false,
+      message: "Error getting ride by ID." + error,
+    });
+  }
+};
 exports.getSensorData = async (req, res, next) => {
   var rideId = req.params.rideId;
   //const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
