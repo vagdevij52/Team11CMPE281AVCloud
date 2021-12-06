@@ -20,7 +20,6 @@ import {
 } from "tabler-react";
 import C3Chart from "react-c3js";
 import "../c3jscustom.css";
-import MapContainer from "./MapContainer";
 
 import SiteWrapper from "./SiteWrapper";
 import ChartsPage from "../components/ChartsPage";

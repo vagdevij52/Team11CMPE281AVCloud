@@ -49,7 +49,7 @@ class Main extends Component {
           <Route path='/admin-AVSensorInfo' component = {VehicleSensorInfo} />          
           <Route path='/carRepairInfo' component = {carRepairInfo} />  
           <Route path="/userTrackingDashboard" exact component={UserTrackingDashboard} />  
-          <Route path="/RenderMap" exact component={MapContainer}/>   
+             
           <Route path="/map" exact component={Map}/>          
           <Route path="/SensorData" exact component={SensorData}/>          
           <Route path="/Speedometer" exact component={Speedometer}/>  
