@@ -314,7 +314,7 @@ const getRideById = (rideId) => {
   const getRouteDetails= async (rideId) => {
     //router.get('/getRoutes', function (req, res) {  
       try {      
-        rideId=86;
+        //rideId=86;
         var rides = await ride.find({ 'Ride ID': rideId }).sort({ _id: -1 }).limit(10);
         return rides.reverse();    
       } catch (error) {
@@ -322,8 +322,7 @@ const getRideById = (rideId) => {
       }
     }
 
-
-
+   
 exports.login = login;
 exports.signup = signup;
 exports.registerVehicle = registerVehicle;

@@ -52,7 +52,7 @@ export default class ChartsPage extends React.Component {
     this.fetchRides = async (rideId) => {
       try {
         console.log("fetch fetchRides");
-        const rideId = this.props.rideId;
+        const rideId = this.props.rideData.rideId;
        const response = await axios.get(`${URLs.baseURL}/getUserRideDetailsByRideID?rideId=${rideId}`);            
         //const data = JSON.parse(sessionStorage.getItem('userRideDetails'));
     

@@ -44,6 +44,7 @@ export default class UserTrackingDashboard extends React.Component {
         //rideId: this.props.rideData   
         rideId: sessionStorage.getItem('rideId') === null ? this.props.rideData : sessionStorage.getItem('rideId'),
         showStatus:this.props.showStatus,
+        isAdmin:this.props.isAdmin,
         title: this.props.title?this.props.title:"User Tracking Dashboard"
     }
     console.log(this.state)
@@ -81,9 +82,9 @@ export default class UserTrackingDashboard extends React.Component {
     console.log(this.state);
     return (
       <SiteWrapper>
-        <Navheader/>
-        <Navbar/>
-        
+        {this.state.isAdmin?(<div></div>)
+        :(<><Navheader /><Navbar /></>)}
+  
         <Page.Content title={this.state.title}>
           <Grid.Row cards={true}>
 

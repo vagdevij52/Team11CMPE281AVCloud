@@ -22,7 +22,7 @@ class SideNavbarAdmin extends Component {
             <li><a href = 'profileInfo' style = {{color: "white"}}>My Profile</a></li>              
             {/* <li><a href = 'admin-deleteUser' style = {{color: "white"}}>Delete Users</a></li>
             <li><a href = 'admin-deleteRide' style = {{color: "white"}}>Delete Rides</a></li>   */}      
-            <li><a href = 'admin-AVSensorInfo' style = {{color: "white"}}>AV Sensor Info</a></li> 
+            {/* <li><a href = 'admin-AVSensorInfo' style = {{color: "white"}}>AV Sensor Info</a></li>  */}
             <li><a href = 'AdminTrackingDashboard' style = {{color: "white"}}>Admin Tracking Dashboard</a></li>              
             <li><a href = 'carRepairInfo' style = {{color: "white"}}>Car Repair Information</a></li>              
           </ul>      

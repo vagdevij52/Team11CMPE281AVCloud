@@ -15,6 +15,24 @@ export default class TripStatus extends React.Component {
         this.state={
             rideStatus:'Booked'
         }
+    this.fetchStatusData=async(rideId)=>{
+        try
+        {
+            console.log("fetch statusdata");
+            const response=await axios.get(`${URLs.baseURL}/getRideStatus?rideId=${rideId}`);
+            if(response.data.success)
+            {
+                var data=response.data.message[0];
+                console.log(data);
+                this.setState({rideStatus:data.Status});
+            }
+        }
+        catch(exception)
+        {
+            console.log("Error fetching ride status");
+        }
+    }
+        
     }
    
     componentDidMount = async () => {
@@ -26,7 +44,7 @@ export default class TripStatus extends React.Component {
           console.log(statusData);
           this.setState({ rideStatus: statusData.Status });          
         });
-        
+        this.fetchStatusData(this.props.rideData.rideId);
       };
     render(){
     return (
