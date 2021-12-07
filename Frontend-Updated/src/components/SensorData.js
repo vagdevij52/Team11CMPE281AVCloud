@@ -100,7 +100,7 @@ export default class SensorData extends React.Component {
         <Grid.Col width={11}>
           <Card title={'Sensor Data'} style={{ width: '28rem' }}>
             <ListGroup>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Weather'}
@@ -108,7 +108,7 @@ export default class SensorData extends React.Component {
                   <Grid.Col>{this.state.sensorData.Weather}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Lighting'}
@@ -116,7 +116,7 @@ export default class SensorData extends React.Component {
                   <Grid.Col>{this.state.sensorData.Lighting}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Latitude'}
@@ -124,7 +124,7 @@ export default class SensorData extends React.Component {
                   <Grid.Col>{this.state.sensorData['Location x']}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Longitude'}
@@ -132,7 +132,7 @@ export default class SensorData extends React.Component {
                   <Grid.Col>{this.state.sensorData['Location y']}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Collision'}
@@ -140,7 +140,7 @@ export default class SensorData extends React.Component {
                   <Grid.Col>{this.state.isCollided}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Heading'}
@@ -148,7 +148,7 @@ export default class SensorData extends React.Component {
                   <Grid.Col>{this.state.sensorData['Heading']}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Brake Applied'}
@@ -156,7 +156,7 @@ export default class SensorData extends React.Component {
                   <Grid.Col>{this.state.isBrakesApplied}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'No. of vehicles nearby'}
@@ -164,7 +164,7 @@ export default class SensorData extends React.Component {
                   <Grid.Col>{this.state.sensorData['Number of vehicles']}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Lane violations'}
