@@ -88,9 +88,9 @@ export default class VehicleMotion extends React.Component {
             var fwd=sensordata.Throttle.filter(i=>i[0]>0||i[1]>0||i[2]>0);
             this.setState({ forward: fwd.length>0?'Yes':'No' });                    
             this.setState({ backward: sensordata.Reverse?'Yes':'No' });
-            var stop=sensordata.Throttle.filter(k=>k[0]==0&&k[1]==0&&k[2]==0);
-            var brakeZero=sensordata.Brake.filter(b=>b[0]==0&&b[1]==0&&b[2]==0);
-            var steerZero=sensordata.Steer.filter(v=>v[0]==0&&v[1]==0&&v[2]==0);
+            var stop=sensordata.Throttle.filter(k=>k[1]==0);
+            var brakeZero=sensordata.Brake.filter(b=>b[1]==0);
+            var steerZero=sensordata.Steer.filter(v=>v[1]==0);
             this.setState({ stopped: (stop.length>0 && brakeZero.length>0&&steerZero.length>0)||(sensordata['Hand Brake']==true)?'Yes':'No' });
             
             this.setState({ idle: stop.length>0?'Yes':'No' });

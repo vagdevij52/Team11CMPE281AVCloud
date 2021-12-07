@@ -106,7 +106,7 @@ export default class TrackRides extends React.Component {
                                                 </ListGroup>
                                 </Accordion.Header>
                                 <Accordion.Body width={100}>
-                                    <UserTrackingDashboard rideData={data.RideID}/>
+                                    <UserTrackingDashboard rideData={data.RideID} showStatus={false}/>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Accordion>

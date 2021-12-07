@@ -35,7 +35,8 @@ export default class UserTrackingDashboard extends React.Component {
     super(props);
       this.state = {
         //rideId: this.props.rideData   
-        rideId: 86
+        rideId: 86,
+        showStatus:this.props.showStatus
     }
     console.log(this.state)
   }
@@ -69,9 +70,13 @@ export default class UserTrackingDashboard extends React.Component {
                     progressWidth={28}
                   /> */}
                 </Grid.Col>
-                <Grid.Col sm={6}>
+               { this.state.showStatus?
+                
+               ( <Grid.Col sm={6}>
                   <TripStatus rideData = {this.state}/>
-                </Grid.Col>
+                </Grid.Col>):<Grid.Col></Grid.Col>
+                }
+                
               </Grid.Row>
             </Grid.Col>
 
