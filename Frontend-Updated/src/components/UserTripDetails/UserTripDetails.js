@@ -3,15 +3,49 @@ import { Image } from 'react-bootstrap';
 import Navheader from '../Navbar/navbar';
 import SideNavbar from '../Navbar/SideNavbar-User';
 import './UserTripDetails.css';
+import axios from 'axios';
+import { url, ownerBearer, userBearer, adminBearer } from '../Constants';
 
 class UserTripDetails extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      amount: 100
+    };
   }
 
-  componentWillMount(){
+  componentDidMount(){
     //API calls to get user data
+    axios.defaults.withCredentials = true;
+    // make a post request with the user data
+    axios
+      .get(url + '/getUserTripDetails?userId=' + sessionStorage.getItem('userid'))
+      .then((response) => {
+        console.log('Status Code : ', response.status);
+        console.log('response ', response.data);
+        if (response.status === 200) {
+          var html = document.getElementById('tblUserCarInfo').innerHTML;
+          var fare = 0;
+          for(var i = 0; i < response.data.length; i++){
+            fare += response.data[i].RideStatus === 'booked' ? 0 : response.data[i].RideAmount;
+            const status = response.data[i].RideStatus === 'booked' ? '-' : response.data[i].RideAmount;
+            html += "<tr><td>" + (i + 1) + "</td><td>" + response.data[i].RideOrigin+ "</td><td>" + response.data[i].RideDestination + "</td><td>" + response.data[i].RideStartTime.substring(0, 10) + "</td><td>" + status + "</td><td>" + response.data[i].RideStatus + "</td></tr>";   
+          }
+
+          fare -= this.state.amount;
+          this.setState({
+            amount : fare * -1
+          })
+
+          document.getElementById('tblUserCarInfo').innerHTML = html;
+        }
+        else {        
+            alert("Something went wrong");        
+        }
+      })
+      .catch((err) => {
+        alert("Something went wrong");   
+      });
   }
 
   render() {
@@ -22,7 +56,7 @@ class UserTripDetails extends Component {
         <div id = "div1">
             {/* <input type="textbox" id="txtLanguage" defaultValue={} style=""/> */}
             <label style = {{marginLeft: "40%", marginTop: "12%", color:"white",fontSize:"21px", fontWeight:"100"}}>{sessionStorage.getItem('username')}</label><br/>
-            <label style = {{marginLeft:"23%", color:"white", fontSize:"21px", fontWeight:"100"}}>Available Amount : $90.00</label>
+            <label style = {{marginLeft:"23%", color:"white", fontSize:"21px", fontWeight:"100"}}>Available Amount : ${this.state.amount}</label>
             <button
               //onClick={}
               class="btn btn-primary"
@@ -52,32 +86,7 @@ class UserTripDetails extends Component {
                         <th>AMOUNT</th>
                         <th>TRIP STATUS</th>
                         {/* <td>BATTERY</td> */}
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>San Jose</td>
-                        <td>Santa Clara</td>
-                        <td>2021-11-14</td>
-                        <td>20.0</td>
-                        <td>Complete</td>
-                        {/* <td>BATTERY</td> */}
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>San Jose</td>
-                        <td>Milpitas</td>
-                        <td>2021-11-14</td>
-                        <td>25.0</td>
-                        <td>Complete</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>San Jose</td>
-                        <td>Santa Clara</td>
-                        <td>2021-11-14</td>
-                        <td>17.0</td>
-                        <td>Booked</td>
-                    </tr>
+                    </tr>                  
                 </table>
             </div>
         </div>       

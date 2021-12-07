@@ -98,11 +98,11 @@ class Map extends React.Component {
         }
         }
         else {
-          alert("Something went wrong");
+          //alert("Something went wrong");
         }    
       }
       catch (exception){
-        alert("Something went wrong");
+        //alert("Something went wrong");
       }
 
      

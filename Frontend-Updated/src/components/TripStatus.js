@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ReactSpeedometer from "react-d3-speedometer";
 import io from "socket.io-client";
 import axios from "axios";
@@ -7,36 +7,28 @@ import { Page, Grid, Card, colors } from "tabler-react";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-function TripStatus(props) {
+export default class TripStatus extends React.Component {
 
-    const [rideDetails, setRideDetails] = useState("");
-    const [rideData, setRideData] = useState("");
-
+    constructor(props)
+    {
+        super(props);
+        this.state={
+            rideStatus:'Booked'
+        }
+    }
    
-   
-    useEffect(() => {
-        const interval = setInterval(() => {
-           // setRideData(props.rideData);
-            fetchRides();
-          //setSeconds(seconds => seconds + 1);
-        }, 1000);
-        return () => clearInterval(interval);
-      }, []);
-    // const state = ()=> {
-    //     rideDetails= "",
-    //     rideData=props.rideData
-    // }
-    //this.interval = window.setInterval(this.fetchRides, 1000);
-
-    const fetchRides = async () => {
+    componentDidMount = async () => {
+        const socket = io(+URLs.socketURL+"/socket", {
+          transports: ['websocket']
+        });
+        socket.on("newStatusData", (statusData) => {
+          
+          console.log(statusData);
+          this.setState({ rideStatus: statusData.Status });          
+        });
         
-            console.log("fetch fetchRides");
-            var rideId = 86;
-            const data = JSON.parse(sessionStorage.getItem('userRideDetails'));
-            setRideDetails(data);
-           
-    };
-    //fetchRides(rideData.rideId);
+      };
+    render(){
     return (
 
         <Card title={'Trip Status'}>
@@ -45,12 +37,12 @@ function TripStatus(props) {
                     <ListGroup.Item>
                         <Grid.Row>
                             <Grid.Col>
-                                {rideDetails.RideStatus}
+                                {this.state.rideStatus}
                             </Grid.Col>
                             <Grid.Col >
                                 <div style={{ paddingTop: "8px" }}>
                                     <ProgressBar variant="success" 
-                                    now={rideDetails.RideStatus=="Booked"?0:rideDetails.RideStatus=="In Progress"?50:100} style={{ height: "7.5px" }} />
+                                    now={this.state.rideStatus=="Booked"?0:this.state.rideStatus=="In Progress"?50:100} style={{ height: "7.5px" }} />
                                 </div>
                             </Grid.Col>
                         </Grid.Row>
@@ -66,11 +58,8 @@ function TripStatus(props) {
         </Card>
 
     );
-
-
-
-
+ }
 }
-export default TripStatus;
+
 
 

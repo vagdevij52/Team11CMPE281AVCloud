@@ -5,6 +5,8 @@ import SideNavbar from '../Navbar/SideNavbar-Owner';
 import './Home-Owner.css';
 import axios from 'axios';
 import { url, ownerBearer, userBearer, adminBearer } from '../Constants';
+import Login from '../Login/login'
+import { Redirect } from 'react-router';
 
 
 class HomePage extends Component {
@@ -37,6 +39,7 @@ class HomePage extends Component {
           .then((response) => {
             console.log('Status Code : ', response.status);
             console.log('response ', response.data);
+            this.setState({amount: 0});              
            
             if(response.data != false)
             {
@@ -45,12 +48,12 @@ class HomePage extends Component {
 
               for(var i = 0; i < response.data.length; i++)
               {
-                html += '<tr><td>' + (i+1) +'</td><td>'+ response.data[0].RideOrigin + '</td><td>' + response.data[0].RideDestination + '</td><td>' + response.data[0].RideStartTime.substring(0, 10) + '</td><td>' + response.data[0].RideStatus + '</td><td>' + response.data[0].RideAmount + '</td></tr>';                    
-                totalAmount += response.data[0].RideAmount;
+                const amount = response.data[i].RideStatus === 'booked' ? '-' : response.data[0].RideAmount;
+                html += '<tr><td>' + (i+1) +'</td><td>'+ response.data[0].RideOrigin + '</td><td>' + response.data[0].RideDestination + '</td><td>' + response.data[0].RideStartTime.substring(0, 10) + '</td><td>' + response.data[0].RideStatus + '</td><td>' + amount + '</td></tr>';                    
+                totalAmount += amount ==='-' ? 0 : response.data[0].RideAmount;
               }
-
-              this.setState({amount: totalAmount});
               
+              this.setState({amount: totalAmount});              
               document.getElementById('tblRidesTaken').innerHTML = html;
             }
              
@@ -74,11 +77,18 @@ class HomePage extends Component {
 
 
   render() {
+    var redirect = null;
+    if(sessionStorage.getItem('userId') === null)
+    {
+      //redirect = <Redirect to='/login' />;
+    }
     return (
       <div>
-        <Navheader />
+        {redirect}
+        <Navheader />               
         <SideNavbar/>
-        <div id = "div1">
+        <div >   
+        <div id = "div1" >
             {/* <input type="textbox" id="txtLanguage" defaultValue={} style=""/> */}
             <label style = {{marginLeft: "40%", marginTop: "12%", color:"white",fontSize:"21px", fontWeight:"100"}}>{sessionStorage.getItem('username')}</label><br/>
             <label style = {{marginLeft:"23%", color:"white", fontSize:"21px", fontWeight:"100"}}>Available Amount : ${this.state.amount}</label>
@@ -147,6 +157,7 @@ class HomePage extends Component {
         </div>
        
        
+      </div>
       </div>
     );
   }

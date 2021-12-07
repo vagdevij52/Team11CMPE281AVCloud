@@ -40,6 +40,7 @@ export default class VehicleMotion extends React.Component {
     componentDidMount = async () => {
       var data = JSON.parse(sessionStorage.getItem('sensorData'));   
 
+      if(data != null) {
       console.log(data);
       console.log(data.Throttle.filter(n=>n[0]));
       console.log(data.Throttle.filter(n=>n[1]));
@@ -66,7 +67,7 @@ export default class VehicleMotion extends React.Component {
       this.setState({ left: data.Steer[1]<0?'Yes':'No' });
       console.log("fetch sensordata");
 
-        const socket = io("http://localhost:3001/socket", {
+        const socket = io(URLs.socketURL+"/socket", {
             transports: ['websocket']
         });
         socket.on("newSensorData", (sensordata) => {
@@ -89,7 +90,7 @@ export default class VehicleMotion extends React.Component {
             this.setState({ left: rt<0?'Yes':'No' });
             console.log(this.state.sensorData);
         });
-        
+      }
     };
 
     render() {

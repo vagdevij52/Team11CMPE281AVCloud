@@ -37,10 +37,11 @@ export default class Speedometer extends React.Component {
   componentDidMount = async () => {
     var data = JSON.parse(sessionStorage.getItem('sensorData'));   
     console.log(data);
+    if(data != null) {
     this.setState({ speed: data['Speed (km/h)'] });
 
     console.log("fetch sensordata");
-    const socket = io("http://localhost:3001/socket", {
+    const socket = io(URLs.socketURL+"/socket", {
       transports: ['websocket']
     });
     socket.on("newSensorData", (sensordata) => {
@@ -49,6 +50,7 @@ export default class Speedometer extends React.Component {
       this.setState({ speed: sensordata['Speed (km/h)'] });
       console.log(this.state.sensorData);
     });
+  }
     
   };
 

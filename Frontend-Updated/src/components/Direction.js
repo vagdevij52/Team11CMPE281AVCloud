@@ -18,12 +18,13 @@ export default class Direction extends React.Component {
     }
     componentDidMount = async () => {
         var data = JSON.parse(sessionStorage.getItem('sensorData'));
+        if(data != null) {
         console.log(data);
         this.setState({ direction: data['Heading Direction'] });
         this.setState({ color: data['Heading Direction']=='W'?"red":data['Heading Direction']=='E'?"yellow":data['Heading Direction']=='S'?"green":data['Heading Direction']=='N'?'green':'orange' });
         this.setState({ width: 100});
         console.log("fetch sensordata");
-        const socket = io("http://localhost:3001/socket", {
+        const socket = io(URLs.socketURL+"/socket", {
             transports: ['websocket']
         });
         socket.on("newSensorData", (sensordata) => {
@@ -36,7 +37,7 @@ export default class Direction extends React.Component {
             this.setState({ width: 100});
             console.log(this.state.sensorData);
         });
-       
+    }
     };
 
     render() {

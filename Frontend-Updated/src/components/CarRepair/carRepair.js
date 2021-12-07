@@ -10,7 +10,8 @@ import {Chart} from'react-google-charts'
 class VehicleSensorInfo extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { repairCount: 0,
+      allCarsInfo: []};
   }
 
   demo = () => {
@@ -19,14 +20,62 @@ class VehicleSensorInfo extends Component {
   }
   componentDidMount(){
     const allCarsInfo = JSON.parse(sessionStorage.getItem('allCarsInfo')); 
+    var html = document.getElementById("tblVehicleInfo").innerHTML;
+    var count = 0;
+    var arr = [];
+
+    for(var i = 0; i < allCarsInfo.length; i++) {
+      if(allCarsInfo[i].VehcileStatus === 'Repair') {
+        html += "<tr><td>" + allCarsInfo[i].VehcileModel + " " + allCarsInfo[i].VehcileNum + "</td><td>Repair</td><td></td></tr>";
+        //arr.push("btn" + allCarsInfo[i].VehcileID);
+        count++;
+      }
+      else {
+        html += "<tr><td>" + allCarsInfo[i].VehcileModel + " " + allCarsInfo[i].VehcileNum + "</td><td>Active</td><td><button id = 'btn" + allCarsInfo[i].VehcileID +"'>Repair</button></td></tr>";
+       
+        arr.push("btn" + allCarsInfo[i].VehcileID);        
+      }
+    }
+
+    document.getElementById("tblVehicleInfo").innerHTML = html;
+
+    for(var i = 0; i < arr.length; i++) {
+      document.getElementById(arr[i]).onclick = this.repair;
+    }
     
-    
-    
+    this.setState({
+      repairCount: count,
+      allCarsInfo: allCarsInfo
+    })
     
 
     //document.getElementById('divVehicleInfo').innerHTML = html;
   }
 
+  repair = (e) => {
+    
+    const data = {
+      vehicleId : e.target.id.substring(3,e.target.id.length)
+    }
+    axios
+    .post(url + '/repairVehicle', data)
+    .then((response) => {
+      alert("Vehicle sent to garage for repair");
+      var allCarsInfo = this.state.allCarsInfo;
+      for(var i = 0; i < allCarsInfo.length; i++) {
+        if(allCarsInfo[i].VehcileID == data.vehicleId) {
+          allCarsInfo[i].VehcileStatus = 'Repair';
+          break;
+        }
+      }
+
+      sessionStorage.setItem('allCarsInfo', JSON.stringify(allCarsInfo));
+      window.location.reload();
+    })
+    .catch((err) => {            
+      alert("Something went wrong");            
+    });
+  }
   onChangeVehicleDropdown = (e) => {
     if(e.target.value == '' || e.target.value == 'Select AV')
     {
@@ -46,34 +95,14 @@ class VehicleSensorInfo extends Component {
         <SideNavbar/>
         {}
         <div>
-          <div id = 'divVehicleInfo'>
-          <label style = {{fontSize:"30px", marginLeft:"20px"}}>   Status of Vehicles which are out of service:</label>
-          <table>
+          <div id = 'divVehicleInfo' style = {{float: "left"}}>
+          <label style = {{fontSize:"30px", marginLeft:"20px"}}>   Status of Vehicles:</label>
+          <table id = 'tblVehicleInfo'>
               <tr>
                   <th>Vehicle Name:</th>
                   <th>Status:</th>
                   <th></th>
-              </tr>
-              <tr>
-                  <td>Honda Accord 87464</td>
-                  <td>Out of service</td>
-                  <td><button>Repair</button></td>
-              </tr>
-              <tr>
-                  <td>Honda Civic 97543</td>
-                  <td>Repairing</td>
-                  <td></td>
-              </tr>
-              <tr>
-                  <td>BMW X2 98750</td>
-                  <td>Out of service</td>
-                  <td><button>Repair</button></td>
-              </tr>
-              <tr>
-                  <td>Tesla Model S</td>
-                  <td>Out of service</td>
-                  <td><button>Repair</button></td>
-              </tr>
+              </tr>         
           </table>
           </div>
           <div id = 'divDisplaySensorInfo' style = {{display : 'none'}}>
@@ -93,12 +122,12 @@ class VehicleSensorInfo extends Component {
         <Chart
   width={'500px'}
   height={'300px'}
-  style = {{marginLeft: "28%"}}
+  style = {{marginLeft: "35%"}}
   chartType="PieChart"
   loader={<div>Loading Chart</div>}
   data={[['Task', 'Autonomous Vehicle Moving States'],
-  ['Repairing', 1],
-  ['Out Of Service', 3],
+  ['Repairing', this.state.repairCount],
+  ['Out Of Service', this.state.allCarsInfo.length],
  
   ]}
   options={{

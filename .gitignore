@@ -1,6 +1,10 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
+/Backend/node_modules
+/Backend-Updated/node_modules
+/Frontend/node_modules
+/Frontend-Updated/node_modules
 /node_modules
 
 # testing
@@ -22,3 +26,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+Backend-Updated/package-lock.json

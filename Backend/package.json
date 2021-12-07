@@ -9,7 +9,7 @@
   "cors": "^2.8.5",
   "author": "",
   "license": "ISC",
-  "dependencies": {    
+  "dependencies": {
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
@@ -55,7 +55,7 @@
     "react-c3js": "^0.1.20",
     "react-scripts": "^4.0.3",
     "socket.io": "^2.3.0",
-    "table-react": "^1.0.9", 
+    "table-react": "^1.0.9",
     "tedious": "^14.0.0",
     "uuid": "^3.1.0",
     "winston": "^3.1.0"

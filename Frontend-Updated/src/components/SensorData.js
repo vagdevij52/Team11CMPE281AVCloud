@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import axios from "axios";
 import URLs from "../URLs";
 import ListGroup from 'react-bootstrap/ListGroup';
+import { url, ownerBearer, userBearer, adminBearer } from './Constants';
 export default class SensorData extends React.Component {
   constructor(props) {
     super(props);
@@ -20,12 +21,18 @@ export default class SensorData extends React.Component {
     this.getRideData = async () => {
       try {
         console.log("fetch sensordata");
-        var rideId = 86;
-        const response = await axios.get(`${URLs.baseURL}/getSensorData?rideId=${rideId}`);
-        if (response.data.success) {
+        //var rideId = this.props.rideData.rideId;
+        var rideId=86;
+        const response = await axios.get(`${url}/getSensorData?rideId=${rideId}`);
+
+        //var data = sessionStorage.getItem('sensorData');
+        if (response.data !== null) {
+
+//        if (data !== null) {
             var data = response.data.message[0];
             sessionStorage.setItem('sensorData', JSON.stringify(data));
             console.log(data);
+            //data = JSON.parse(data);
             var collisiondata = data.Collision.filter(item => item != 0);
                 this.setState({ sensorData: data });
                 this.setState({ isCollided: collisiondata.length > 0 ? 'Yes' : 'No' });
@@ -38,9 +45,9 @@ export default class SensorData extends React.Component {
         }
     } catch (error) {
         console.log("Error with fetching rides: ", error);
-        alert(
-            "Error with fetching ride. Please check the console for more info."
-        );
+        // alert(
+        //     "Error with fetching ride. Please check the console for more info."
+        // );
       }
     }
     this.fetchSensorData = async (rideId) => {
@@ -69,7 +76,7 @@ export default class SensorData extends React.Component {
   
   componentDidMount = async () => {
     this.getRideData();
-    const socket = io("http://localhost:3001/socket", {
+    const socket = io(URLs.socketURL+"/socket", {
       transports: ['websocket']
     });
     socket.on("newSensorData", (sensordata) => {

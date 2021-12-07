@@ -30,9 +30,9 @@ class Navheader extends Component {
       isloggedin = (
         <ul className='nav navbar-nav navbar-right'>
           <li>
-            <Button className='Home-default' variant='default'>
+            {/* <Button className='Home-default' variant='default'>
               <Link to='/dashboard'> Home </Link>
-            </Button>
+            </Button> */}
           </li>
           <li>
             {/* <Image

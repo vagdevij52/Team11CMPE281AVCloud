@@ -4,6 +4,8 @@ import Navheader from '../Navbar/navbar';
 import SideNavbar from '../Navbar/SideNavbar-User';
 import { url, ownerBearer, userBearer, adminBearer } from '../Constants';
 import axios from 'axios';
+import Login from '../Login/login';
+import { Redirect } from 'react-router';
 
 class HomePageUser extends Component {
   constructor(props) {
@@ -40,11 +42,26 @@ class HomePageUser extends Component {
              return;
            }
 
+           const sdArray = this.state.sdArray;
+           for(var index = 0; index < sdArray.length; index++) {
+               const src = sdArray[index][0];
+               const des = sdArray[index][1];
+
+               if((source === src && destination === des) || (source === des && destination === src)) {
+                 var fare = sdArray[index][3] / (0.75);
+                 this.setState({
+                   time: sdArray[index][3],
+                   fare: fare.toFixed(2)
+                 })
+               }
+           }
+
            const data = {
              userId : sessionStorage.getItem('userid'),
               vehicleId : response.data[i].VehcileID,
               source : source,
-              destination : destination
+              destination : destination,
+              fare : this.state.fare
            }
 
            const carModel = response.data[i].VehcileModel;
@@ -62,7 +79,12 @@ class HomePageUser extends Component {
                 carNo : carNumber,
                 carModel : carModel
               });
-              document.getElementById("divRide").style.display = '';              
+
+             
+              document.getElementById("divRide").style.display = '';   
+              const rideId = response.data.data[0].rideId; 
+              sessionStorage.setItem('rideId', rideId);
+              this.fetchSensorDetails(rideId);
             }
             else
             {
@@ -84,17 +106,49 @@ class HomePageUser extends Component {
     });
   }
 
+  fetchSensorDetails= async (rideId) => {
+    //var rideId = 86;
+    const response = await axios.get(`${url}/getSensorData?rideId=${rideId}`);
+    if(response !== null)
+    {
+      var data = response.data.message[0];
+      sessionStorage.setItem('sensorData', JSON.stringify(data));
+    }
+  }
   componentWillMount(){
-    //API calls to get user data
+   
+        //API calls to get user data
     //document.getElementById("divRide").hide();
+    const arr = [
+      ['Santa Clara', 'San Francisco', 103.84, 10],
+      ['Santa Clara', 'Los Angeles', 237.447, 20],
+      ['Santa Clara', 'Las Gatos', 125.104, 12],
+      ['Santa Clara', 'San Jose', 129.404, 13],
+      ['Santa Clara', 'Fremont', 96.86 , 15],
+      ['Santa Clara', 'San Francisco', 103.84, 10],
+      ['Los Angeles', 'San Francisco', 238.546 , 25],
+      ['Las Gatos', 'San Francisco', 164.4722, 18],
+      ['San Jose', 'San Francisco', 86.091, 7],
+      ['Fremont', 'San Francisco', 66.766, 5],     
+    ]
+    
+    this.setState({
+      sdArray: arr
+    })
   }
 
   render() {
+    var redirect = null;
+    if(sessionStorage.getItem('userid') === null)
+    {
+      redirect = <Redirect to='/login' />;
+    }
     return (
       <div>
+        {redirect}
         <Navheader />
         <SideNavbar/>
-        <div  style = {{marginLeft:"15%", width: "83%", borderRadius:"15px", background:"#fcf6f6"}}>
+        <div  style = {{marginLeft:"15%", width: "83%", borderRadius:"15px"}}>
             <label style = {{fontWeight:"100", fontSize: "22px", marginLeft: "3%", marginTop: "1%"}}>Book a ride</label>    
             <hr style = {{borderColor:"#cbc0c0"}}></hr>
             <div>
@@ -112,15 +166,15 @@ class HomePageUser extends Component {
                 <option>SUV</option>
                 <option>Limousine</option>
             </select><br/>
-            <button onClick = {this.BookRide} style = {{marginTop: "3%", marginLeft: "3%", width: "10%", borderRadius: "5px", border: "1px solid", height: "35px", background: "#dc9f9f"}}>
+            <button onClick = {this.BookRide} style = {{marginTop: "3%", marginLeft: "3%", width: "10%", borderRadius: "5px", border: "1px solid", height: "35px", background: "rgb(3 70 114)"}}>
                 Book Ride
             </button>
             <div id = 'divRide' style = {{marginTop: "2%", marginLeft: "3%", border: "1px solid", width: "28%", background: "white", borderRadius: "15px", display:"none"}}>
               <label style = {{marginTop: "4%", marginLeft: "2%"}}>
               Car Model : {this.state.carModel}<br/>
               Car Number : {this.state.carNo}<br/>
-              Estimated time : 16 min<br/>
-              Estimated Amount : 34$
+              Estimated time : {this.state.time} min<br/>
+              Estimated Amount : {this.state.fare}$
               </label>
             </div>
             

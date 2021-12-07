@@ -113,11 +113,11 @@ class ProfileInfo extends Component {
             <label>Birthday</label>
             <label style = {{marginLeft: "30%"}}>Gender</label><br/>
             <input type = 'textbox' id = 'txtBirthday' style = {{borderRadius: "5px"}} placeholder = "mm/dd/yyyy" ></input>
-            <input type = 'textbox' id = 'txtGender' style = {{borderRadius: "5px", marginLeft:"8%"}} defaultValue = {sessionStorage.getItem('gender')}></input><br/><br/>
+            <input type = 'textbox' id = 'txtGender' style = {{borderRadius: "5px", marginLeft:"8%"}} defaultValue = {sessionStorage.getItem('gender') === 'null' ? '' : sessionStorage.getItem('gender')}></input><br/><br/>
             <label>Email</label>
             <label style = {{marginLeft: "33%"}}>Phone</label><br/>
             <input type = 'textbox' id = 'txtEmail' style = {{borderRadius: "5px"}} defaultValue = {sessionStorage.getItem('useremail')} readOnly></input>
-            <input type = 'textbox' id = 'txtPhone' style = {{borderRadius: "5px", marginLeft:"8%"}} defaultValue = {sessionStorage.getItem('userPhone')}></input><br/><br/>
+            <input type = 'textbox' id = 'txtPhone' style = {{borderRadius: "5px", marginLeft:"8%"}} defaultValue = {sessionStorage.getItem('userPhone') === 'null' ? '' : sessionStorage.getItem('userPhone')}></input><br/><br/>
             <button onClick = {this.saveUserDetails} style = {{borderRadius: "5px", border : " 1px solid", height: "33px", background: "#034672", color: "white", width:"122px", marginBottom: "2%"}}>Save Details</button>
             </div>
         </div>      

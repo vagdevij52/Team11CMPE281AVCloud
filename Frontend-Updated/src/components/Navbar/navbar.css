@@ -81,7 +81,7 @@
 }
 .login-default:hover {
   color: #5c5c5c;
-  background-color: #0fb1fe;
+  background-color: #034672;
   border-color: rgb(187, 187, 187);
 }
 
@@ -100,7 +100,8 @@
   font-size: 15px;
   border: 1px solid rgb(187, 187, 187);
   padding: 8px 20px;
-  margin-right: 10px;
+  margin-right: 34px;
+  width: 51%;
 }
 .Signup-default:hover {
   color: #a09a94;
@@ -238,4 +239,13 @@ div.dropdown-menu.show:hover {
 .nav-link2:hover {
   text-decoration: none;
   color: #000000;
+}
+
+li {
+  padding-bottom: 15px;
+  text-decoration: underline;
+}
+ul {
+  padding-top: 20px;
+  list-style-type: none;
 }

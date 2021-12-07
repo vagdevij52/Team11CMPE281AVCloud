@@ -2,6 +2,7 @@ var cookieParser = require('cookie-parser');
 const dbConnection = require('../dbContext/dbContext');
 var TYPES = require('tedious').TYPES;
 const ride = require("../routes/ride");
+const spawn = require("child_process").spawn;
 
 
 
@@ -92,6 +93,23 @@ const getVehicleDetails = (userid) => {
           });  
         });
 }
+const getUserTripDetails = (userId) => {
+  return new Promise((resolve, reject) => {
+      var parameters = [];
+     
+      parameters.push({ name: 'UserId', type: TYPES.Int, val: userId });        
+      const query = 'SELECT * FROM AVCLOUD.dbo.VEHICLERIDEDETAILS WHERE RideCustomerID=@UserId order by RideStartTime desc;';
+  
+      dbConnection.query(query, parameters, false, function (error, data) {          
+          resolve(data);
+          if (error) {
+            reject();
+          }            
+          return data;
+        });  
+      });
+}
+
 
 const getVehicleRideDetails = (vehicleId) => {
     return new Promise((resolve, reject) => {
@@ -125,8 +143,10 @@ const getAllVehicleDetails = () => {
         });
 }
 
-const bookRide = (userId, vehicleId, source, destination) => {
+const bookRide = (userId, vehicleId, source, destination, fare) => {
     return new Promise((resolve, reject) => {
+      
+
         var parameters = [];
        
         parameters.push({ name: 'VehcileID', type: TYPES.Int, val: vehicleId });
@@ -144,14 +164,27 @@ const bookRide = (userId, vehicleId, source, destination) => {
                 parameters1.push({ name: 'RideOrigin', type: TYPES.NVarChar, val: source });
                 parameters1.push({ name: 'RideDestination', type: TYPES.NVarChar, val: destination });
                 parameters1.push({ name: 'RideDistance', type: TYPES.Float, val: 0 });
-                parameters1.push({ name: 'RideAmount', type: TYPES.Float, val: 100 });
+                parameters1.push({ name: 'RideAmount', type: TYPES.Float, val: fare});
                 parameters1.push({ name: 'RideStatus', type: TYPES.NVarChar, val: 'booked' });
 
-                const query = 'Insert into VEHICLERIDEDETAILS(RideStartTime, RideEndTime, RideVehicleID, RideOrigin, RideDestination, RideCustomerID, RideDistance, RideAmount, RideStatus) values(@RideStartTime, @RideEndTime, @VehcileID, @RideOrigin, @RideDestination, @UserID, @RideDistance, @RideAmount, @RideStatus)'
+                const query = 'Insert into VEHICLERIDEDETAILS(RideStartTime, RideEndTime, RideVehicleID, RideOrigin, RideDestination, RideCustomerID, RideDistance, RideAmount, RideStatus) values(@RideStartTime, @RideEndTime, @VehcileID, @RideOrigin, @RideDestination, @UserID, @RideDistance, @RideAmount, @RideStatus);select @@identity as rideId;'
     
                 dbConnection.getQuery(query, parameters1, false, function (error, data) {           
                     if (data) {                        
-                        resolve({ msg: 'successfully inserted', data });
+                      const rideId = data[0].rideId;
+                      const pythonProcess = spawn('python',["/opt/carla-simulator/PythonAPI/examples/carlaMain.py", '--trip_id=' + rideId]);
+                      pythonProcess.stdout.on('data', (data) => {
+                          console.log(`stdout: ${data}`);
+                      });
+                    
+                      pythonProcess.stderr.on('data', (data) => {
+                          console.error(`stderr: ${data}`);
+                      });
+                    
+                      pythonProcess.on('close', (code) => {
+                          console.log(`child process exited with code ${code}`);
+                      });
+                      resolve({ msg: 'successfully inserted', data });
                     } else {
                         console.log(error);
                         reject({ msg: 'Internal_Server_Error ' + error });
@@ -165,6 +198,8 @@ const bookRide = (userId, vehicleId, source, destination) => {
             }
           });  
         });
+
+
 }
 
 const getAllUserDetails = () => {
@@ -207,6 +242,25 @@ const saveUserDetails = (userId, firstName, lastName, birthday, gender, phone) =
         });
 }
 
+const repairVehicle = (vehicleId) => {
+  return new Promise((resolve, reject) => {
+      var parameters = [];             
+      parameters.push({ name: 'VehicleId', type: TYPES.Int, val: vehicleId });
+      parameters.push({ name: 'Status', type: TYPES.NVarChar, val: 'Repair' });
+
+      const query = 'update dbo.VEHICLEDETAILS set VehcileStatus = @Status where VehcileID = @VehicleId;';
+  
+      dbConnection.getQuery(query, parameters, false, function (error, data) {           
+          if (data) {                                     
+              resolve({ msg: 'successfully inserted', data });              
+          } else {
+              console.log(error);
+              reject({ msg: 'Internal_Server_Error ' + error });
+          }
+        });  
+      });
+}
+
 const getUserDetails = (userid) => {
     return new Promise((resolve, reject) => {
         var parameters = [];       
@@ -232,7 +286,10 @@ const getRideById = (rideId) => {
     // parameters.push({ name: 'RideID', type: TYPES.Int, val: rideId });
     var query = "SELECT vd.*,vrd.*,c.* FROM AVCLOUD.dbo.VEHICLERIDEDETAILS vrd JOIN AVCLOUD.dbo.VEHICLEDETAILS vd on vd.VehcileID=vrd.RideVehicleID JOIN AVCLOUD.dbo.USERDETAILS c on vrd.RideCustomerID=c.UserID WHERE vrd.RideID= " + rideId + ";";
     dbConnection.query(query, parameters, false, function (error, data) {
-      if (error) throw error;
+      if (error) {
+        console.log(error);
+        reject(error);
+      }
       //console.log(data);
       ////console.log("why"+data[0].FirstName);
       if (data && data[0]) resolve(data[0]);
@@ -257,6 +314,7 @@ const getRideById = (rideId) => {
   const getRouteDetails= async (rideId) => {
     //router.get('/getRoutes', function (req, res) {  
       try {      
+        rideId=86;
         var rides = await ride.find({ 'Ride ID': rideId }).sort({ _id: -1 }).limit(10);
         return rides.reverse();    
       } catch (error) {
@@ -279,3 +337,5 @@ exports.getUserDetails = getUserDetails;
 exports.getRideById = getRideById;
 exports.getAllRidesSensor = getAllRidesSensor;
 exports.getRouteDetails = getRouteDetails;
+exports.getUserTripDetails = getUserTripDetails;
+exports.repairVehicle = repairVehicle;

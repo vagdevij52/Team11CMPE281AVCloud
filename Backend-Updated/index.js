@@ -13,8 +13,10 @@ const multer = require('multer');
 const socketIO = require("socket.io");
 const http = require("http");
 app.set('view engine', 'ejs');
-//app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+//app.use(cors({ origin: 'http://localhost:3000'}));
+
+//app.use(cors());
 
 
 app.use(session({
@@ -118,7 +120,22 @@ app.use(function(req, res, next) {
           break;
       }
     });
-  });
+
+    
+
+const statusDataChangeStream = connection.collection("Status").watch();
+statusDataChangeStream.on("change", (change) => {
+  console.log("status change stream called");
+  switch (change.operationType) {
+    case "insert":
+      console.log("insert status stream called");
+      const statusData = change.fullDocument;
+      console.log(statusData);
+      io.of("/socket").emit("newStatusData", statusData);
+      break;
+  }
+});
+}); 
   
 
 //app.listen(3001);

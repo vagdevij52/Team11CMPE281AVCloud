@@ -17,7 +17,7 @@ import VehicleSensorInfo from './VehicleSensorInfo/VehicleSensorInfo'
 import carRepairInfo from './CarRepair/carRepair'
 import UserTrackingDashboard from './UserTrackingDashboard';
 import Map from './Map';
-import "tabler-react/dist/Tabler.css";
+// import "tabler-react/dist/Tabler.css";
 import SensorData from "./SensorData";
 import Speedometer from "./Speedometer";
 import VehicleMotion from "./VehicleMotion";

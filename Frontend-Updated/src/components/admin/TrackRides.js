@@ -19,11 +19,11 @@ export default class TrackRides extends React.Component {
         this.fetchRides = async () => {
             try {
                 console.log("fetch fetchRides");
-                const response = await axios.get(`${URLs.baseURL}/admin/track/getrides`);
+                const response = await axios.get(`${URLs.baseURL}/getAllRidesSensor`);
 
-                if (response.data.success) {
-                    console.log(response.data.message);
-                    this.setState({ rideDetails: response.data.message[0] });
+                if (response.data) {
+                    console.log(response.data[0]);
+                    this.setState({ rideDetails: response.data[0]});
                     // this.rideDetails = response.data.message.VehcileNum;
                     console.log(this.state.rideDetails);
                     // vehicleno = response.data.message.VehcileNum;
@@ -33,44 +33,44 @@ export default class TrackRides extends React.Component {
                 }
             } catch (error) {
                 console.log("Error with fetching Rides: ", error);
-                alert(
-                    "Error with fetching Ride. Please check the console for more info."
-                );
+                // alert(
+                //     "Error with fetching Ride. Please check the console for more info."
+                // );
             }
         };
-        this.fetchSensorData = async (rideId) => {
-            try {
-                console.log("fetch sensordata");
-                const response = await axios.get(`${URLs.baseURL}/users/sensordata/${rideId}`);
-                if (response.data.success) {
-                    var data = response.data.message[0];
-                    console.log(data);
-                    this.setState({ sensorData: data });
+        // this.fetchSensorData = async (rideId) => {
+        //     try {
+        //         console.log("fetch sensordata");
+        //         const response = await axios.get(`${URLs.baseURL}/users/sensordata/${rideId}`);
+        //         if (response.data.success) {
+        //             var data = response.data.message[0];
+        //             console.log(data);
+        //             this.setState({ sensorData: data });
 
-                    console.log("fetch sensordata");
+        //             console.log("fetch sensordata");
 
-                } else {
-                    //alert(response.data.message);
-                }
-            } catch (error) {
-                console.log("Error with fetching rides: ", error);
-                alert(
-                    "Error with fetching ride. Please check the console for more info."
-                );
-            }
-        };
+        //         } else {
+        //             //alert(response.data.message);
+        //         }
+        //     } catch (error) {
+        //         console.log("Error with fetching rides: ", error);
+        //         alert(
+        //             "Error with fetching ride. Please check the console for more info."
+        //         );
+        //     }
+        // };
     }
     componentDidMount = async () => {
-        const socket = io("http://localhost:3001/socket", {
-            transports: ['websocket']
-        });
-        socket.on("newSensorData", (sensordata) => {
-            console.log(this.state.sensorData);
-            console.log(sensordata);
-            this.setState({ sensorData: sensordata });
-            console.log(this.state.sensorData);
-        });
-        await this.fetchSensorData(this.state.rideData.rideId);
+        // const socket = io("http://localhost:3001/socket", {
+        //     transports: ['websocket']
+        // });
+        // socket.on("newSensorData", (sensordata) => {
+        //     console.log(this.state.sensorData);
+        //     console.log(sensordata);
+        //     this.setState({ sensorData: sensordata });
+        //     console.log(this.state.sensorData);
+        // });
+        // await this.fetchSensorData(this.state.rideData.rideId);
         await this.fetchRides();
     };
 
@@ -81,13 +81,13 @@ export default class TrackRides extends React.Component {
                 {
                     this.state.rideDetails.map((data, i) =>
                     // console.log(data)
-                        <Accordion defaultActiveKey="0" style={{width:"68rem"}}>
+                        <Accordion defaultActiveKey="0" style={{width:"1050px"}}>
                             <Accordion.Item eventKey="1">
                                 <Accordion.Header width={100}>
 
-                                                <ListGroup style={{width:"68rem",fontSize:"0.9375rem",fontWeight:"400"}}>
+                                                <ListGroup style={{width:"1050px",fontWeight:"1",fontSize:"medium"}}>
                                                     <ListGroup.Item variant="secondary">
-                                                        <Grid.Row width="68rem" sm={4} md={4}>
+                                                        <Grid.Row width="68rem" sm={3} md={3}>
                                                             {/* <Grid.Col>
                                                               {data.FirstName+" "+data.LastName}
                                                             </Grid.Col> */}

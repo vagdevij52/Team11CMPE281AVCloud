@@ -2,6 +2,11 @@ import * as React from "react";
 import { useState } from 'react';
 import axios from "axios";
 import URLs from "../URLs";
+import Navheader from './Navbar/navbar';
+import Navbar from './Navbar/SideNavbar-User'
+//import "tabler-react/dist/Tabler.css";
+
+
 import {
   Page,
   Avatar,
@@ -37,7 +42,7 @@ export default class UserTrackingDashboard extends React.Component {
     super(props);
       this.state = {
         //rideId: this.props.rideData   
-        rideId: 86,
+        rideId: sessionStorage.getItem('rideId') === null ? this.props.rideData : sessionStorage.getItem('rideId'),
         showStatus:this.props.showStatus,
         title: this.props.title?this.props.title:"User Tracking Dashboard"
     }
@@ -76,6 +81,9 @@ export default class UserTrackingDashboard extends React.Component {
     console.log(this.state);
     return (
       <SiteWrapper>
+        <Navheader/>
+        <Navbar/>
+        
         <Page.Content title={this.state.title}>
           <Grid.Row cards={true}>
 
@@ -101,12 +109,11 @@ export default class UserTrackingDashboard extends React.Component {
                     progressWidth={28}
                   /> */}
                 </Grid.Col>
-               {/* { this.state.showStatus?
-                
-               ( <Grid.Col sm={6}>
+                             
+                <Grid.Col sm={6}>
                   <TripStatus rideData = {this.state}/>
-                </Grid.Col>):<Grid.Col></Grid.Col>
-                } */}
+                   </Grid.Col>
+                
                 
               </Grid.Row>
             </Grid.Col>

@@ -228,10 +228,7 @@ class Signup extends Component {
         })
         .catch((err) => {
           console.log(err.response);
-          alert("Email already exists");
-          this.setState({
-            errorMessage: err.response.data,
-          });
+          alert("Email already exists");          
         });
     }
   };

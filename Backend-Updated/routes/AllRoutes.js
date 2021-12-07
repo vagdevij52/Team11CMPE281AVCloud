@@ -10,10 +10,10 @@ const { MongoClient } = require('mongodb');
 
 
 router.get('/login', function (req, res) {
-    PythonShell.run("C:\\Users\\varun\\OneDrive\\Desktop\\281\\TermProject-Local\\CMPE281TermProject\\python1.py", null, function (err) {
-        if (err) throw err;
-        console.log('finished reading python script');
-      });
+    // PythonShell.run("C:\\Users\\varun\\OneDrive\\Desktop\\281\\TermProject-Local\\CMPE281TermProject\\python1.py", null, function (err) {
+    //     if (err) throw err;
+    //     console.log('finished reading python script');
+    //   });
     console.log('Inside login');
     //console.log(req.body);  
     const email = req.query.email;
@@ -144,6 +144,56 @@ router.get('/login', function (req, res) {
     
   });
 
+  router.get('/getVehicleDetails', function (req, res) {
+    console.log('Inside getVehicleDetails');
+    //console.log(req.body);  
+    const userid = req.query.userId;
+    //const password = req.query.password;
+    console.log(userid);
+    service.getVehicleDetails(userid)    
+    .then(function(results){
+        res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});        
+        res.writeHead(200,{
+            'Content-Type' : 'text/plain'
+        })
+        console.log("Inside get getVehicleDetails then block");
+        console.log(JSON.stringify(results));
+        res.end(JSON.stringify(results));
+    })
+    .catch(function(err){
+        console.log("Inside get getVehicleDetails - Promise rejection error: "+err);
+        return res.status(500).send({
+            message: err
+         });
+    });   
+    
+  });
+
+  router.get('/getUserTripDetails', function (req, res) {
+    console.log('Inside getUserTripDetails');
+    //console.log(req.body);  
+    const userId = req.query.userId;
+    //const password = req.query.password;
+    console.log(userId);
+    service.getUserTripDetails(userId)    
+    .then(function(results){
+        res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});        
+        res.writeHead(200,{
+            'Content-Type' : 'text/plain'
+        })
+        console.log("Inside get getUserTripDetails then block");
+        console.log(JSON.stringify(results));
+        res.end(JSON.stringify(results));
+    })
+    .catch(function(err){
+        console.log("Inside get getUserTripDetails - Promise rejection error: "+err);
+        return res.status(500).send({
+            message: err
+         });
+    });   
+    
+  });
+
   router.get('/getAllVehicleDetails', function (req, res) {
     console.log('Inside getAllVehicleDetails');
     //console.log(req.body);  
@@ -176,9 +226,10 @@ router.get('/login', function (req, res) {
     const vehicleId = req.body.vehicleId;
     const source = req.body.source;
     const destination = req.body.destination;    
-    
+    const fare = req.body.fare;
+
     console.log(vehicleId + " : " + source + " : " + destination + " : " + userId);
-    service.bookRide(userId, vehicleId, source, destination)
+    service.bookRide(userId, vehicleId, source, destination, fare)
     .then(function(results){
         res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});        
         res.writeHead(200,{
@@ -252,6 +303,28 @@ router.get('/login', function (req, res) {
     
   });
 
+  router.post('/repairVehicle', function (req, res) {
+    console.log('Inside repairVehicle');     
+    const vehicleId = req.body.vehicleId;     
+    service.repairVehicle(vehicleId)
+    .then(function(results){
+        res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});        
+        res.writeHead(200,{
+            'Content-Type' : 'text/plain'
+        })
+        console.log("Inside post repairVehicle then block");
+        console.log(JSON.stringify(results));
+        res.end(JSON.stringify(results));
+    })
+    .catch(function(err){
+        console.log("Inside post repairVehicle - Promise rejection error: "+err);
+        return res.status(500).send({
+            message: err
+         });
+    });   
+    
+  });
+
   router.get('/getUserDetails', function (req, res) {
     console.log('Inside getUserDetails');    
     const userId = req.query.userId;    
@@ -317,7 +390,7 @@ router.get('/login', function (req, res) {
         db.close();
         return res.json({
           success: true,
-          message: result[0]["frame"].filter(i=>i['Ride ID']==rideId),
+          message: result[0] === undefined ? null : result[0]["frame"].filter(i=>i['Ride ID']==rideId),
         });
         //console.log(result);
   

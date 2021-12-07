@@ -42,9 +42,9 @@ export default class ChartsPage extends React.Component {
         }
       } catch (error) {
         console.log("Error with fetching rides: ", error);
-        alert(
-          "Error with fetching ride. Please check the console for more info."
-        );
+        // alert(
+        //   "Error with fetching ride. Please check the console for more info."
+        // );
       }
     };
     var vehicleno = "";
@@ -52,20 +52,21 @@ export default class ChartsPage extends React.Component {
     this.fetchRides = async (rideId) => {
       try {
         console.log("fetch fetchRides");
-      //  const response = await axios.get(`${URLs.baseURL}/getUserRideDetailsByRideID?rideId=${rideId}`);            
-        const data = JSON.parse(sessionStorage.getItem('userRideDetails'));
+        const rideId = this.props.rideId;
+       const response = await axios.get(`${URLs.baseURL}/getUserRideDetailsByRideID?rideId=${rideId}`);            
+        //const data = JSON.parse(sessionStorage.getItem('userRideDetails'));
     
-        if (data) {
+        if (response.data) {
           //console.log(response.data.message);
-          sessionStorage.setItem('userRideDetails', JSON.stringify(data));
-          this.setState({ rideDetails: data.VehcileNum }); 
+          sessionStorage.setItem('userRideDetails', JSON.stringify(response.data.message));
+          this.setState({ rideDetails: response.data.message.VehcileNum }); 
         }
         else {
-          alert("Something went wrong");
+          //alert("Something went wrong");
         }    
       }
       catch (exception){
-        alert("Something went wrong");
+        //alert("Something went wrong");
       }
     }
 
@@ -157,7 +158,7 @@ export default class ChartsPage extends React.Component {
     //socket.io connection
     // const socket = io(`http://localhost:3001/socket`);
 
-    const socket = io("http://localhost:3001/socket", {
+    const socket = io(URLs.socketURL + "/socket", {
       //withCredentials: true,
       transports: ['websocket']
       // extraHeaders: {
