@@ -13,8 +13,8 @@ const multer = require('multer');
 const socketIO = require("socket.io");
 const http = require("http");
 app.set('view engine', 'ejs');
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-
+//app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors());
 
 
 app.use(session({
@@ -65,7 +65,7 @@ app.use(function(req, res, next) {
   //URI = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
   //URI="mongodb://localhost:27017/AirlineApplication";
   //start the server
-  //server.listen(3001, () => console.log(`Server now running on port 3001!`));
+  server.listen(3001, () => console.log(`Server now running on port 3001!`));
   
   //connect to db
   mongoose.connect(URI, {
@@ -121,5 +121,5 @@ app.use(function(req, res, next) {
   });
   
 
-app.listen(3001);
+//app.listen(3001);
 console.log("Server Listening on port 3001");
