@@ -4,11 +4,16 @@ const dbConnection = require('../dbContext/dbContext');
 var TYPES = require('tedious').TYPES;
 const router = express.Router();
 const service = require('../services/Service');
-
-
+const PythonShell = require('python-shell').PythonShell;
+const ride = require("./ride");
+const { MongoClient } = require('mongodb');
 
 
 router.get('/login', function (req, res) {
+    PythonShell.run("C:\\Users\\varun\\OneDrive\\Desktop\\281\\TermProject-Local\\CMPE281TermProject\\python1.py", null, function (err) {
+        if (err) throw err;
+        console.log('finished reading python script');
+      });
     console.log('Inside login');
     //console.log(req.body);  
     const email = req.query.email;
@@ -269,5 +274,97 @@ router.get('/login', function (req, res) {
     });   
     
   });
+
+  router.get('/getUserRideDetailsByRideID', function (req, res) {
+//   exports.getUserRideDetailsByRideID = async (req, res, next) => {
+    
+      const rideId = req.query.rideId;
+      //const rideExists = await Admin.getVehicle(rideId);
+  
+      const ride = service.getRideById(rideId)
+      .then(function(results){
+        res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});        
+        res.writeHead(200,{
+            'Content-Type' : 'text/plain'
+        })
+        console.log("Inside get getRideById then block");
+        console.log(JSON.stringify(results));
+        res.end(JSON.stringify(results));
+        })
+        .catch(function(err){
+            console.log("Inside get getRideById - Promise rejection error: "+err);
+            return res.status(500).send({
+            message: err
+         });
+        });    
+    });
+
+  router.get('/getSensorData', function (req, res) {
+ // exports.getSensorData = async (req, res, next) => {
+    var rideId = req.query.rideId;
+    //const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+    const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+
+    //const uri = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
+    MongoClient.connect(uri, function (err, db) {
+      if (err) throw err;
+      var dbo = db.db("AVCLOUD");
+      //var dbo = db.db("cmpe281");
+      //Find all documents in the customers collection:
+      //dbo.collection("LiveSensorData").find({ "Ride ID": 86 }).sort({ _id: -1 }).limit(1).toArray(function (err, result) {
+      dbo.collection("LiveSensorData").find({}).sort({ _id: -1 }).limit(1).toArray(function (err, result) {
+        if (err) throw err;
+        db.close();
+        return res.json({
+          success: true,
+          message: result[0]["frame"].filter(i=>i['Ride ID']==rideId),
+        });
+        //console.log(result);
+  
+      });
+    });  
+  })
+
+  router.get('/getAllRidesSensor', function (req, res) {        
+      
+          const ride = service.getAllRidesSensor()
+          .then(function(results){
+            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});        
+            res.writeHead(200,{
+                'Content-Type' : 'text/plain'
+            })
+            console.log("Inside get getAllRidesSensor then block");
+            console.log(JSON.stringify(results));
+            res.end(JSON.stringify(results));
+            })
+            .catch(function(err){
+                console.log("Inside get getAllRidesSensor - Promise rejection error: "+err);
+                return res.status(500).send({
+                message: err
+             });
+            });    
+});
+
+router.get('/getRoutes', function (req, res) {  
+  
+     const data = service.getRouteDetails(req.query.rideId)
+     .then(function(results){
+        res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});        
+        res.writeHead(200,{
+            'Content-Type' : 'text/plain'
+        })
+        res.end(JSON.stringify(results));
+        })
+        .catch(function(err){
+            console.log("Inside get getRideById - Promise rejection error: "+err);
+            return res.status(500).send({
+            message: err
+         });
+        });      
+  });
+  
+    
+ 
+
 
   module.exports = router; 

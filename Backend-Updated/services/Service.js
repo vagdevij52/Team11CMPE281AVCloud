@@ -1,6 +1,7 @@
 var cookieParser = require('cookie-parser');
 const dbConnection = require('../dbContext/dbContext');
 var TYPES = require('tedious').TYPES;
+const ride = require("../routes/ride");
 
 
 
@@ -222,6 +223,47 @@ const getUserDetails = (userid) => {
         });
 }
 
+const getRideById = (rideId) => {
+  return new Promise((resolve, reject) => {
+    //console.log("v id"+vehicleId);
+    //console.log("u id"+ownerId);
+    var parameters = [];
+    // parameters.push({ name: 'UserID', type: TYPES.Int, val: ownerId });
+    // parameters.push({ name: 'RideID', type: TYPES.Int, val: rideId });
+    var query = "SELECT vd.*,vrd.*,c.* FROM AVCLOUD.dbo.VEHICLERIDEDETAILS vrd JOIN AVCLOUD.dbo.VEHICLEDETAILS vd on vd.VehcileID=vrd.RideVehicleID JOIN AVCLOUD.dbo.USERDETAILS c on vrd.RideCustomerID=c.UserID WHERE vrd.RideID= " + rideId + ";";
+    dbConnection.query(query, parameters, false, function (error, data) {
+      if (error) throw error;
+      //console.log(data);
+      ////console.log("why"+data[0].FirstName);
+      if (data && data[0]) resolve(data[0]);
+      else if (!data && !error) resolve();
+    });
+  });
+}
+
+  const getAllRidesSensor = () => {
+    return new Promise((resolve, reject) => {
+      var parameters = [];            
+      var sql = "SELECT top 10 vrd.*,vd.*,c.* FROM AVCLOUD.dbo.VEHICLERIDEDETAILS vrd JOIN AVCLOUD.dbo.VEHICLEDETAILS vd on vd.VehcileID=vrd.RideVehicleID JOIN AVCLOUD.dbo.USERDETAILS c on vrd.RideCustomerID=c.UserID WHERE RideStatus IS NOT NULL ORDER BY 1 DESC;";
+      dbConnection.getQuery(sql, parameters, true, function (error, data) {
+          if (data) {
+              resolve(data);
+          } else
+              reject(error);
+      });
+  });
+  }
+
+  const getRouteDetails= async (rideId) => {
+    //router.get('/getRoutes', function (req, res) {  
+      try {      
+        var rides = await ride.find({ 'Ride ID': rideId }).sort({ _id: -1 }).limit(10);
+        return rides.reverse();    
+      } catch (error) {
+        console.log("Error with fetching rides: " + error);     
+      }
+    }
+
 
 
 exports.login = login;
@@ -234,3 +276,6 @@ exports.bookRide = bookRide;
 exports.getAllUserDetails = getAllUserDetails;
 exports.saveUserDetails = saveUserDetails;
 exports.getUserDetails = getUserDetails;
+exports.getRideById = getRideById;
+exports.getAllRidesSensor = getAllRidesSensor;
+exports.getRouteDetails = getRouteDetails;
