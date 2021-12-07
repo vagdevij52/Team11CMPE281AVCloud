@@ -18,7 +18,7 @@ import {
   ProgressCard,
   Badge,
 } from "tabler-react";
-
+import "../../customstyles.css";
 
 import TrackRides from "./TrackRides";
 import SiteWrapper from "../SiteWrapper";

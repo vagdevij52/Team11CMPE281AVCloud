@@ -22,7 +22,7 @@ import {
 } from "tabler-react";
 import C3Chart from "react-c3js";
 import "../c3jscustom.css";
-
+import "../customstyles.css";
 import SiteWrapper from "./SiteWrapper";
 import ChartsPage from "../components/ChartsPage";
 import MapComponent from "../components/Map";
@@ -37,7 +37,9 @@ export default class UserTrackingDashboard extends React.Component {
     super(props);
       this.state = {
         //rideId: this.props.rideData   
-        rideId: 86
+        rideId: 86,
+        showStatus:this.props.showStatus,
+        title: this.props.title?this.props.title:"User Tracking Dashboard"
     }
     console.log(this.state)
   }
@@ -74,7 +76,7 @@ export default class UserTrackingDashboard extends React.Component {
     console.log(this.state);
     return (
       <SiteWrapper>
-        <Page.Content title="User Tracking Dashboard">
+        <Page.Content title={this.state.title}>
           <Grid.Row cards={true}>
 
             <Grid.Col lg={6}>
@@ -99,9 +101,13 @@ export default class UserTrackingDashboard extends React.Component {
                     progressWidth={28}
                   /> */}
                 </Grid.Col>
-                <Grid.Col sm={6}>
-                  {/* <TripStatus rideData = {this.state}/> */}
-                </Grid.Col>
+               {/* { this.state.showStatus?
+                
+               ( <Grid.Col sm={6}>
+                  <TripStatus rideData = {this.state}/>
+                </Grid.Col>):<Grid.Col></Grid.Col>
+                } */}
+                
               </Grid.Row>
             </Grid.Col>
 
