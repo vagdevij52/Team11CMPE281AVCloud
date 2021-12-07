@@ -33,7 +33,9 @@ export default class VehicleMotion extends React.Component {
             left:"",
             idle:"",
             stopped:"",
-            rideData:this.props.rideData
+            rideData:this.props.rideData,
+            redLight:false,
+            redLightLoc:[]
         };    
     }
 
@@ -78,7 +80,21 @@ export default class VehicleMotion extends React.Component {
             var stop=sensordata.Throttle.filter(k=>k[1]==0);
             var brakeZero=sensordata.Brake.filter(b=>b[1]==0);
             var steerZero=sensordata.Steer.filter(v=>v[1]==0);
-            this.setState({ stopped: (stop.length>0 && brakeZero.length>0&&steerZero.length>0)||(sensordata['Hand Brake']==true)?'Yes':'No' });
+            var redLight=false;
+            if(sensordata['Traffic Lights'].length>0 && 
+            (sensordata['Brake'][0]==0.5&& sensordata['Brake'][1]==0&&sensordata['Brake'][2]==1)
+            &&(sensordata['Steer'][0]==0&&sensordata['Steer'][1]==-1&&sensordata['Steer'][2]==1)
+            &&(sensordata['Throttle'][0]==0&&sensordata['Throttle'][1]==0&&sensordata['Throttle'][2]==1))
+            {
+              redLight=true;
+              this.setState({redLight:true});
+              this.setState({redLightLoc:sensordata['Traffic Lights'][0]+','+sensordata['Traffic Lights'][1]+']'})
+              this.setState({ stopped: 'Red Light' });
+            }else
+            {
+              this.setState({redLight:false});
+              this.setState({ stopped: (stop.length>0 && brakeZero.length>0&&steerZero.length>0)||(sensordata['Hand Brake']==true)?'Yes':'No' });
+            }        
             
             this.setState({ idle: stop.length>0?'Yes':'No' });
            // var rt=sensordata.Steer.filter(x=>x[0]>0||x[1]>0||x[2]>0);
@@ -98,7 +114,7 @@ export default class VehicleMotion extends React.Component {
         <Grid.Col width={11}>
           <Card title={'Vehicle Moving States'} style={{ width: '28rem' }}>
             <ListGroup>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Forward'}
@@ -106,7 +122,7 @@ export default class VehicleMotion extends React.Component {
                   <Grid.Col>{this.state.forward}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Backward'}
@@ -114,15 +130,16 @@ export default class VehicleMotion extends React.Component {
                   <Grid.Col>{this.state.backward}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Stopped'}
                   </Grid.Col>
-                  <Grid.Col>{this.state.stopped}</Grid.Col>
+                  <Grid.Col>{this.state.stopped}</Grid.Col>                  
                 </Grid.Row>
+                {this.state.redLight?<Grid.Row><Grid.Col></Grid.Col><Grid.Col>{this.state.redLightLoc}</Grid.Col></Grid.Row>:""}
               </ListGroup.Item>
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Idle'}
@@ -130,7 +147,7 @@ export default class VehicleMotion extends React.Component {
                   <Grid.Col>{this.state.idle}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>  
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Right'}
@@ -138,7 +155,7 @@ export default class VehicleMotion extends React.Component {
                   <Grid.Col>{this.state.right}</Grid.Col>
                 </Grid.Row>
               </ListGroup.Item>  
-              <ListGroup.Item variant="secondary">
+              <ListGroup.Item>
                 <Grid.Row>
                   <Grid.Col>
                     {'Left'}
