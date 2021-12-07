@@ -34,51 +34,38 @@ export default class VehicleMotion extends React.Component {
             idle:"",
             stopped:"",
             rideData:this.props.rideData
-        };
-        this.fetchSensorData = async (rideId) => {
-            try {
-                console.log("fetch sensordata");
-                const response = await axios.get(`${URLs.baseURL}/users/sensordata/${rideId}`);
-                if (response.data.success) {
-                    var data = response.data.message[0];
-                    console.log(data);
-                    console.log(data.Throttle.filter(n=>n[0]));
-                    console.log(data.Throttle.filter(n=>n[1]));
-                    console.log(data.Throttle.filter(n=>n[2]));
-                    //var fwd=data.Throttle
-                    this.setState({ forward: (data.Throttle[0]>0||data.Throttle[1]>0||data.Throttle[2]>0)?'Yes':'No' });                    
-                    //this.setState({ forward: (data.Throttle[1]>0)?'Yes':'No' });                    
-                    this.setState({ backward: data.Reverse?'Yes':'No' });
-                    // var stop=data.Throttle[0]==0&&data.Throttle[1]==0&&data.Throttle[2]==0;
-                    // var brakeZero=data.Brake[0]==0&&data.Brake[1]==0&&data.Brake[2]==0;
-                    // var steerZero=data.Steer[0]==0&&data.Steer[1]==0&&data.Steer[2]==0;
-                   
-                    //this.setState({ stopped: (stop && brakeZero &&steerZero)||(data['Hand Brake']==true)?'Yes':'No' });
-                    this.setState({ stopped: (data.Throttle[1] ==0 && data.Brake[1]==0 && data.Steer[1]==0)||(data['Hand Brake'])?'Yes':'No' });
-                    
-                    this.setState({ idle: (data.Steer[1]==0&&data.Throttle[1]==0)?'Yes':'No' });
-                    //var rt=data.Steer[0]>0||data.Steer[1]>0||data.Steer[2]>0;
-                    //var lt=data.Steer[0]<0||data.Steer[1]<0||data.Steer[2]<0;
-                    //var rt=data.Steer[1]>0||data.Steer[2]>0;
-                    //var lt=data.Steer[1]<0;
-                    // this.setState({ right: rt?'Yes':'No'});
-                    // this.setState({ left: lt?'Yes':'No' });
-                    this.setState({ right: data.Steer[1]>0?'Yes':'No'});
-                    this.setState({ left: data.Steer[1]<0?'Yes':'No' });
-                    console.log("fetch sensordata");
-
-                } else {
-                    //alert(response.data.message);
-                }
-            } catch (error) {
-                console.log("Error with fetching rides: ", error);
-                alert(
-                    "Error with fetching ride. Please check the console for more info."
-                );
-            }
-        };
+        };    
     }
+
     componentDidMount = async () => {
+      var data = JSON.parse(sessionStorage.getItem('sensorData'));   
+
+      console.log(data);
+      console.log(data.Throttle.filter(n=>n[0]));
+      console.log(data.Throttle.filter(n=>n[1]));
+      console.log(data.Throttle.filter(n=>n[2]));
+      //var fwd=data.Throttle
+      this.setState({ forward: (data.Throttle[0]>0||data.Throttle[1]>0||data.Throttle[2]>0)?'Yes':'No' });                    
+      //this.setState({ forward: (data.Throttle[1]>0)?'Yes':'No' });                    
+      this.setState({ backward: data.Reverse?'Yes':'No' });
+      // var stop=data.Throttle[0]==0&&data.Throttle[1]==0&&data.Throttle[2]==0;
+      // var brakeZero=data.Brake[0]==0&&data.Brake[1]==0&&data.Brake[2]==0;
+      // var steerZero=data.Steer[0]==0&&data.Steer[1]==0&&data.Steer[2]==0;
+     
+      //this.setState({ stopped: (stop && brakeZero &&steerZero)||(data['Hand Brake']==true)?'Yes':'No' });
+      this.setState({ stopped: (data.Throttle[1] ==0 && data.Brake[1]==0 && data.Steer[1]==0)||(data['Hand Brake'])?'Yes':'No' });
+      
+      this.setState({ idle: (data.Steer[1]==0&&data.Throttle[1]==0)?'Yes':'No' });
+      //var rt=data.Steer[0]>0||data.Steer[1]>0||data.Steer[2]>0;
+      //var lt=data.Steer[0]<0||data.Steer[1]<0||data.Steer[2]<0;
+      //var rt=data.Steer[1]>0||data.Steer[2]>0;
+      //var lt=data.Steer[1]<0;
+      // this.setState({ right: rt?'Yes':'No'});
+      // this.setState({ left: lt?'Yes':'No' });
+      this.setState({ right: data.Steer[1]>0?'Yes':'No'});
+      this.setState({ left: data.Steer[1]<0?'Yes':'No' });
+      console.log("fetch sensordata");
+
         const socket = io("http://localhost:3001/socket", {
             transports: ['websocket']
         });
@@ -102,7 +89,7 @@ export default class VehicleMotion extends React.Component {
             this.setState({ left: rt<0?'Yes':'No' });
             console.log(this.state.sensorData);
         });
-        await this.fetchSensorData(this.state.rideData.rideId);
+        
     };
 
     render() {

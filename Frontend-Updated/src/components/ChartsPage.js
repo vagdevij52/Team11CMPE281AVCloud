@@ -16,13 +16,13 @@ export default class ChartsPage extends React.Component {
     this.fetchRouteInfo = async (rideId) => {
       try {
         console.log("fetch thots");
-        const response = await axios.get(`${URLs.baseURL}/common/routeinfo/getRoutesInfo/${rideId}`);
+        const response = await axios.get(`${URLs.baseURL}/getRoutes?rideId=${rideId}`);
 
-        if (response.data.success) {
-          console.log(response.data.message);
-          var RoadIDs = response.data.message.map(item => item['Road ID']);
-          var LaneIDs = response.data.message.map(item => item['Lane ID']);
-          this.setState({ rides: response.data.message });
+        if (response.data) {
+          console.log(response.data);
+          var RoadIDs = response.data.map(item => item['Road ID']);
+          var LaneIDs = response.data.map(item => item['Lane ID']);
+          this.setState({ rides: response.data });
           this.setState({
             series: [
               {
@@ -52,25 +52,22 @@ export default class ChartsPage extends React.Component {
     this.fetchRides = async (rideId) => {
       try {
         console.log("fetch fetchRides");
-        const response = await axios.get(`${URLs.baseURL}/users/ride/${rideId}`);
-
-        if (response.data.success) {
-          console.log(response.data.message);
-          this.setState({ rideDetails: response.data.message.VehcileNum });
-          // this.rideDetails = response.data.message.VehcileNum;
-          // console.log(this.rideDetails);
-          // vehicleno = response.data.message.VehcileNum;
-
-        } else {
-          //alert(response.data.message);
+      //  const response = await axios.get(`${URLs.baseURL}/getUserRideDetailsByRideID?rideId=${rideId}`);            
+        const data = JSON.parse(sessionStorage.getItem('userRideDetails'));
+    
+        if (data) {
+          //console.log(response.data.message);
+          sessionStorage.setItem('userRideDetails', JSON.stringify(data));
+          this.setState({ rideDetails: data.VehcileNum }); 
         }
-      } catch (error) {
-        console.log("Error with fetching Rides: ", error);
-        alert(
-          "Error with fetching Ride. Please check the console for more info."
-        );
+        else {
+          alert("Something went wrong");
+        }    
       }
-    };
+      catch (exception){
+        alert("Something went wrong");
+      }
+    }
 
    
     this.state = {
@@ -138,8 +135,8 @@ export default class ChartsPage extends React.Component {
           // title: {
           //   text: 'Temperature'
           // },
-          min: 5,
-          max: 40
+          min: -5,
+          max: 1000
         },
         legend: {
           position: 'top',
@@ -155,6 +152,8 @@ export default class ChartsPage extends React.Component {
 
   }
   componentDidMount = async () => {
+    this.fetchRouteInfo(this.state.rideData.rideId);
+    this.fetchRides(this.state.rideData.rideId);
     //socket.io connection
     // const socket = io(`http://localhost:3001/socket`);
 
@@ -206,8 +205,7 @@ export default class ChartsPage extends React.Component {
       this.setState({ rides: [] });
     });
 
-    await this.fetchRouteInfo(this.state.rideData.rideId);
-    await this.fetchRides(this.state.rideData.rideId);
+   
   };
 
   render() {

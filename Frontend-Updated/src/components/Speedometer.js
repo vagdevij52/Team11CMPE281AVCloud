@@ -29,29 +29,17 @@ export default class Speedometer extends React.Component {
       speed: "",
       rideData:this.props.rideData
     };
-    this.fetchSensorData = async (rideId) => {
-      try {
-        console.log("fetch sensordata");
-        const response = await axios.get(`${URLs.baseURL}/users/sensordata/${rideId}`);
-        if (response.data.success) {
-          var data = response.data.message[0];
-          console.log(data);
-          this.setState({ speed: data['Speed (km/h)'] });
+   
+     
 
-          console.log("fetch sensordata");
-
-        } else {
-          //alert(response.data.message);
-        }
-      } catch (error) {
-        console.log("Error with fetching rides: ", error);
-        alert(
-          "Error with fetching ride. Please check the console for more info."
-        );
-      }
-    };
+    
   }
   componentDidMount = async () => {
+    var data = JSON.parse(sessionStorage.getItem('sensorData'));   
+    console.log(data);
+    this.setState({ speed: data['Speed (km/h)'] });
+
+    console.log("fetch sensordata");
     const socket = io("http://localhost:3001/socket", {
       transports: ['websocket']
     });
@@ -61,7 +49,7 @@ export default class Speedometer extends React.Component {
       this.setState({ speed: sensordata['Speed (km/h)'] });
       console.log(this.state.sensorData);
     });
-    await this.fetchSensorData(this.state.rideData.rideId);
+    
   };
 
   render() {

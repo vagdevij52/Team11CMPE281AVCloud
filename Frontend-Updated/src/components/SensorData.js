@@ -17,30 +17,58 @@ export default class SensorData extends React.Component {
       vehicleCount: 0,
       rideData:this.props.rideData
     }
-    this.fetchSensorData = async (rideId) => {
+    this.getRideData = async () => {
       try {
         console.log("fetch sensordata");
-        const response = await axios.get(`${URLs.baseURL}/users/sensordata/${rideId}`);
+        var rideId = 86;
+        const response = await axios.get(`${URLs.baseURL}/getSensorData?rideId=${rideId}`);
         if (response.data.success) {
-          var data = response.data.message[0];
-          var collisiondata = data.Collision.filter(item => item != 0);
-          this.setState({ sensorData: data });
-          this.setState({ isCollided: collisiondata.length > 0 ? 'Yes' : 'No' });
-          console.log("fetch sensordata");
-          var brakes = data.Brake.filter(ih => ih[0] == 1 && ih[1] == 0 && ih[2] == 1).map(n => n);
-          this.setState({ isBrakesApplied: brakes.length > 0 ? 'Yes' : 'No' });
+            var data = response.data.message[0];
+            sessionStorage.setItem('sensorData', JSON.stringify(data));
+            console.log(data);
+            var collisiondata = data.Collision.filter(item => item != 0);
+                this.setState({ sensorData: data });
+                this.setState({ isCollided: collisiondata.length > 0 ? 'Yes' : 'No' });
+                console.log("fetch sensordata");
+                var brakes = data.Brake.filter(ih => ih[0] == 1 && ih[1] == 0 && ih[2] == 1).map(n => n);
+            console.log("fetch sensordata");
+  
         } else {
-          //alert(response.data.message);
+            //alert(response.data.message);
         }
-      } catch (error) {
+    } catch (error) {
         console.log("Error with fetching rides: ", error);
         alert(
-          "Error with fetching ride. Please check the console for more info."
+            "Error with fetching ride. Please check the console for more info."
         );
       }
+    }
+    this.fetchSensorData = async (rideId) => {
+      // try {
+      //   console.log("fetch sensordata");
+      //   const response = await axios.get(`${URLs.baseURL}/getSensorData?rideId=${rideId}`);
+      //   if (response.data.success) {
+      //     var data = response.data.message[0];
+      //     var collisiondata = data.Collision.filter(item => item != 0);
+      //     this.setState({ sensorData: data });
+      //     this.setState({ isCollided: collisiondata.length > 0 ? 'Yes' : 'No' });
+      //     console.log("fetch sensordata");
+      //     var brakes = data.Brake.filter(ih => ih[0] == 1 && ih[1] == 0 && ih[2] == 1).map(n => n);
+      //     this.setState({ isBrakesApplied: brakes.length > 0 ? 'Yes' : 'No' });
+      //   } else {
+      //     //alert(response.data.message);
+      //   }
+      // } catch (error) {
+      //   console.log("Error with fetching rides: ", error);
+      //   alert(
+      //     "Error with fetching ride. Please check the console for more info."
+      //   );
+      // }
     };
   }
+  
   componentDidMount = async () => {
+    this.getRideData();
     const socket = io("http://localhost:3001/socket", {
       transports: ['websocket']
     });

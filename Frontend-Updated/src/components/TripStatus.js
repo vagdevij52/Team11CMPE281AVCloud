@@ -17,7 +17,7 @@ function TripStatus(props) {
     useEffect(() => {
         const interval = setInterval(() => {
            // setRideData(props.rideData);
-            fetchRides(props.rideData.rideId);
+            fetchRides();
           //setSeconds(seconds => seconds + 1);
         }, 1000);
         return () => clearInterval(interval);
@@ -28,27 +28,13 @@ function TripStatus(props) {
     // }
     //this.interval = window.setInterval(this.fetchRides, 1000);
 
-    const fetchRides = async (rideId) => {
-        try {
+    const fetchRides = async () => {
+        
             console.log("fetch fetchRides");
-            const response = await axios.get(`${URLs.baseURL}/users/ride/${rideId}`);
-
-            if (response.data.success) {
-                console.log(response.data.message);
-                setRideDetails(response.data.message);
-                // this.rideDetails = response.data.message.VehcileNum;
-                // console.log(this.rideDetails);
-                // vehicleno = response.data.message.VehcileNum;
-
-            } else {
-                //alert(response.data.message);
-            }
-        } catch (error) {
-            console.log("Error with fetching Rides: ", error);
-            alert(
-                "Error with fetching Ride. Please check the console for more info."
-            );
-        }
+            var rideId = 86;
+            const data = JSON.parse(sessionStorage.getItem('userRideDetails'));
+            setRideDetails(data);
+           
     };
     //fetchRides(rideData.rideId);
     return (

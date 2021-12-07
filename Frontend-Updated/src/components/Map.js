@@ -25,79 +25,98 @@ class Map extends React.Component {
     };
   }
  
-  fetchRides = async (rideId) => {
-    try {
+  fetchRides = async (rideId) => {    
       console.log("fetch fetchRides");
-      const response = await axios.get(`${URLs.baseURL}/users/ride/${rideId}`);
+      //const response = await axios.get(`${URLs.baseURL}/getUserRideDetailsByRideID?rideId=${rideId}`);
 
-      if (response.data.success) {
-        console.log(response.data.message);
-        //response.data.message.RideDestination="Naperville";
-       // this.setState({ rideDetails: response.data.message.VehcileNum });  
-        this.setState({origin:response.data.message.RideOrigin,desn:response.data.message.RideDestination})     
-        Geocode.setApiKey("AIzaSyDSHwfEGzjkWKL_X9hMMPm_l_QuE402Vkc");
-
-    // set response language. Defaults to english.
-    Geocode.setLanguage("en");
-    var paths=[];
-    //response.data.message.RideOrigin="Chicago";
-    await Geocode.fromAddress(response.data.message.RideOrigin).then(
-        (response) => {
-            const { olat, olng } = response.results[0].geometry.location;
-           // console.log(olat, olng);
-            var source={lat:response.results[0].geometry.location.lat,lng:response.results[0].geometry.location.lng};
-            console.log(source);
-            paths.push(source);
-        },
-        (error) => {
-            console.error(error);
-        }
-    );
-    await Geocode.fromAddress(this.state.desn).then(
-        (response) => {
-            const { dlat, dlng } = response.results[0].geometry.location;
-            //console.log(dlat, dlng);
-            var desnn={lat:response.results[0].geometry.location.lat,lng:response.results[0].geometry.location.lng};
-            paths.push(desnn);
-        },
-        (error) => {
-            console.error(error);
-        }
-    );
+      //const data = JSON.parse(sessionStorage.getItem('userRideDetails'));
+      try {
+        console.log("fetch fetchRides");
+        const response = await axios.get(`${URLs.baseURL}/getUserRideDetailsByRideID?rideId=${rideId}`);            
     
-    this.setState({path:paths});
-   this.interval = window.setInterval(this.moveObject, 0.0000001);
-   
-    this.state.path = this.state.path.map((coordinates, i, array) => {
-        if (i === 0) {
-          return { ...coordinates, distance: 0 }; // it begins here!
-        }
-        const { lat: lat1, lng: lng1 } = coordinates;
-        const latLong1 = new window.google.maps.LatLng(lat1, lng1);
+        if (response.data) {
+          //console.log(response.data.message);
+          sessionStorage.setItem('userRideDetails', JSON.stringify(response.data));
+          const data = response.data;
+         // this.setState({ rideDetails: response.data.VehcileNum }); 
+         if(data != null) {
+          this.setState({origin:data.RideOrigin,desn:data.RideDestination})     
+          Geocode.setApiKey("AIzaSyDSHwfEGzjkWKL_X9hMMPm_l_QuE402Vkc");
   
-        const { lat: lat2, lng: lng2 } = array[0];
-        const latLong2 = new window.google.maps.LatLng(lat2, lng2);
-  
-        // in meters:
-        const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-          latLong1,
-          latLong2
-        );
-  
-        return { ...coordinates, distance };
-      });
-      this.moveObject();
-  
-      console.log(this.state.path);
-      } else {
-        //alert(response.data.message);
-      }
-    } catch (error) {
-      console.log("Error with fetching rides: ", error);
-      alert(
-        "Error with fetching ride. Please check the console for more info."
+      // set response language. Defaults to english.
+      Geocode.setLanguage("en");
+      var paths=[];
+      //response.data.message.RideOrigin="Chicago";
+      await Geocode.fromAddress(data.RideOrigin).then(
+          (response) => {
+              const { olat, olng } = response.results[0].geometry.location;
+             // console.log(olat, olng);
+              var source={lat:response.results[0].geometry.location.lat,lng:response.results[0].geometry.location.lng};
+              console.log(source);
+              paths.push(source);
+          },
+          (error) => {
+              console.error(error);
+          }
       );
-    }
+      await Geocode.fromAddress(this.state.desn).then(
+          (response) => {
+              const { dlat, dlng } = response.results[0].geometry.location;
+              //console.log(dlat, dlng);
+              var desnn={lat:response.results[0].geometry.location.lat,lng:response.results[0].geometry.location.lng};
+              paths.push(desnn);
+          },
+          (error) => {
+              console.error(error);
+          }
+      );
+
+      this.setState({path:paths});
+       this.interval = window.setInterval(this.moveObject, 0.0000001);
+       
+        this.state.path = this.state.path.map((coordinates, i, array) => {
+            if (i === 0) {
+              return { ...coordinates, distance: 0 }; // it begins here!
+            }
+            const { lat: lat1, lng: lng1 } = coordinates;
+            const latLong1 = new window.google.maps.LatLng(lat1, lng1);
+      
+            const { lat: lat2, lng: lng2 } = array[0];
+            const latLong2 = new window.google.maps.LatLng(lat2, lng2);
+      
+            // in meters:
+            const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+              latLong1,
+              latLong2
+            );
+      
+            return { ...coordinates, distance };
+          });
+          this.moveObject();
+      
+          console.log(this.state.path); 
+        }
+        }
+        else {
+          alert("Something went wrong");
+        }    
+      }
+      catch (exception){
+        alert("Something went wrong");
+      }
+
+     
+    
+  //                                   
+  //     } else {
+  //       //alert(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.log("Error with fetching rides: ", error);
+  //     alert(
+  //       "Error with fetching ride. Please check the console for more info."
+  //     );
+  //   }
   };
  
   velocity = 100;
@@ -111,8 +130,7 @@ class Map extends React.Component {
   
 
   componentDidMount = () => {
-    this.fetchRides(this.state.rideData.rideId);
-      
+    this.fetchRides(this.state.rideData.rideId);      
   };
 
   componentWillUnmount = () => {
