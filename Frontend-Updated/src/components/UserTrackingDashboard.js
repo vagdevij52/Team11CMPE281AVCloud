@@ -36,7 +36,8 @@ export default class UserTrackingDashboard extends React.Component {
       this.state = {
         //rideId: this.props.rideData   
         rideId: 86,
-        showStatus:this.props.showStatus
+        showStatus:this.props.showStatus,
+        title: this.props.title?this.props.title:"User Tracking Dashboard"
     }
     console.log(this.state)
   }
@@ -45,7 +46,7 @@ export default class UserTrackingDashboard extends React.Component {
     console.log(this.state);
     return (
       <SiteWrapper>
-        <Page.Content title="User Tracking Dashboard">
+        <Page.Content title={this.state.title}>
           <Grid.Row cards={true}>
 
             <Grid.Col lg={6}>
