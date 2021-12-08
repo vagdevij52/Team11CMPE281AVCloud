@@ -84,7 +84,7 @@ class HomePageUser extends Component {
               document.getElementById("divRide").style.display = '';   
               const rideId = response.data.data[0].rideId; 
               sessionStorage.setItem('rideId', rideId);
-              this.fetchSensorDetails(rideId);
+              //this.fetchSensorDetails(rideId);
             }
             else
             {

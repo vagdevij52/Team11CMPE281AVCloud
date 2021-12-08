@@ -7,8 +7,8 @@ if (process.env.NODE_ENV === "production") {
   };
 } else {
   URLs = {
-    baseURL: "http://localhost:3001",
-    socketURL: "http://localhost:3001",
+    baseURL: "http://3.134.116.221:3001",
+    socketURL: "http://3.134.116.221:3001",
   };
 }
 

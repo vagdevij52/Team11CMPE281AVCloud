@@ -21,8 +21,8 @@ export default class SensorData extends React.Component {
     this.getRideData = async () => {
       try {
         console.log("fetch sensordata");
-        //var rideId = this.props.rideData.rideId;
-        var rideId=86;
+        var rideId = this.props.rideData.rideId;
+        //var rideId=86;
         const response = await axios.get(`${url}/getSensorData?rideId=${rideId}`);
 
         //var data = sessionStorage.getItem('sensorData');

@@ -13,7 +13,7 @@ const multer = require('multer');
 const socketIO = require("socket.io");
 const http = require("http");
 app.set('view engine', 'ejs');
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: 'http://3.134.116.221:3000', credentials: true }));
 //app.use(cors({ origin: 'http://localhost:3000'}));
 
 //app.use(cors());
@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 require('./routes/index')(app);
 
 app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'http://3.134.116.221:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
@@ -42,7 +42,7 @@ app.use(function(req, res, next) {
   const server = require("http").createServer(app);
   const io = require("socket.io")(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "http://3.134.116.221:3000",
       methods: ["GET", "POST"],
       transports: ['websocket']
     }
@@ -58,6 +58,7 @@ app.use(function(req, res, next) {
     });
   
   });
+
   // io.on("connect_error", (err) => {
   //   console.log(`connect_error due to ${err.message}`);
   // });
@@ -84,6 +85,7 @@ app.use(function(req, res, next) {
     console.log("Setting change streams");
     const rideChangeStream = connection.collection("RouteInfo").watch();
     const sensorDataChangeStream = connection.collection("LiveSensorData").watch();
+	const statusDataChangeStream = connection.collection("Status").watch();
     rideChangeStream.on("change", (change) => {
       console.log("change stream called");
       switch (change.operationType) {
@@ -123,7 +125,7 @@ app.use(function(req, res, next) {
 
     
 
-const statusDataChangeStream = connection.collection("Status").watch();
+//const statusDataChangeStream = connection.collection("Status").watch();
 statusDataChangeStream.on("change", (change) => {
   console.log("status change stream called");
   switch (change.operationType) {
