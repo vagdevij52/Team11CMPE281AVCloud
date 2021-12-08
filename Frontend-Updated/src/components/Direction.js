@@ -20,7 +20,7 @@ export default class Direction extends React.Component {
     componentDidMount = async () => {
         //var data = JSON.parse(sessionStorage.getItem('sensorData'));
         const response = await axios.get(`${url}/getSensorData?rideId=${this.props.rideData.rideId}`);
-     
+        try{     
         if(response.data != null) {
             var data = response.data.message[0];
         console.log(data);
@@ -41,7 +41,9 @@ export default class Direction extends React.Component {
             this.setState({ width: 100});
             console.log(this.state.sensorData);
         });
+	}
     }
+	catch(err)  {console.log("error in direction", err)};
     };
 
     render() {

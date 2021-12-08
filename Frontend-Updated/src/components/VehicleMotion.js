@@ -44,7 +44,7 @@ export default class VehicleMotion extends React.Component {
     componentDidMount = async () => {
       //var data = JSON.parse(sessionStorage.getItem('sensorData'));   
       const response = await axios.get(`${url}/getSensorData?rideId=${this.props.rideData.rideId}`);
-      if(response.data !== null) {
+      if(response.data !== null && response.data.message.length >0) {
         var data = response.data.message[0];
       console.log(data);
       console.log(data.Throttle.filter(n=>n[0]));
@@ -85,14 +85,18 @@ export default class VehicleMotion extends React.Component {
             var brakeZero=sensordata.Brake.filter(b=>b[1]==0);
             var steerZero=sensordata.Steer.filter(v=>v[1]==0);
             var redLight=false;
+
             if(sensordata['Traffic Lights'].length>0 && 
             (sensordata['Brake'][0]==0.5&& sensordata['Brake'][1]==0&&sensordata['Brake'][2]==1)
             &&(sensordata['Steer'][0]==0&&sensordata['Steer'][1]==-1&&sensordata['Steer'][2]==1)
             &&(sensordata['Throttle'][0]==0&&sensordata['Throttle'][1]==0&&sensordata['Throttle'][2]==1))
             {
               redLight=true;
+		   // const light = sensordata['Traffic Lights'][0] === null ? sensordata['Traffic Lights'][0]: sensordata['Traffic Lights'][0].toFixed(2);
+		    //const light1 = sensordata['Traffic Lights'][1] === null ? sensordata['Traffic Lights'][1]: sensordata['Traffic Lights'][1].toFixed(2);
+
               this.setState({redLight:true});
-              this.setState({redLightLoc:'['+sensordata['Traffic Lights'][0].toFixed(2)+','+sensordata['Traffic Lights'][1].toFixed(2)+']'})
+              //this.setState({redLightLoc:light+light1})
               this.setState({ stopped: 'Red Light' });
             }else
             {
@@ -159,7 +163,7 @@ export default class VehicleMotion extends React.Component {
                   <Grid.Col>{this.state.stopped}</Grid.Col>                  
                 </Grid.Row>
                 {/* {this.state.redLight?<Grid.Row><Grid.Col></Grid.Col><Grid.Col>{this.state.redLightLoc}</Grid.Col></Grid.Row>:""} */}
-                {this.state.redLight?<Grid.Row><Grid.Col></Grid.Col><Grid.Col>{this.state.redLightLoc}</Grid.Col></Grid.Row>:""}
+                {this.state.redLight?<Grid.Row><Grid.Col></Grid.Col><Grid.Col></Grid.Col></Grid.Row>:""}
               </ListGroup.Item>
               <ListGroup.Item>
                 <Grid.Row>

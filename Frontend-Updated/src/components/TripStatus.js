@@ -36,7 +36,8 @@ export default class TripStatus extends React.Component {
     }
    
     componentDidMount = async () => {
-        const socket = io(+URLs.socketURL+"/socket", {
+	    try {
+        const socket = io(URLs.socketURL+"/socket", {
           transports: ['websocket']
         });
         socket.on("newStatusData", (statusData) => {
@@ -44,6 +45,8 @@ export default class TripStatus extends React.Component {
           console.log(statusData);
           this.setState({ rideStatus: statusData.Status });          
         });
+	    }
+	    catch ( err ) {console.log("Error fetching socket details",err);}
         this.fetchStatusData(this.props.rideData.rideId);
       };
     render(){
