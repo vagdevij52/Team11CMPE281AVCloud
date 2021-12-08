@@ -40,9 +40,10 @@ export default class VehicleMotion extends React.Component {
     }
 
     componentDidMount = async () => {
-      var data = JSON.parse(sessionStorage.getItem('sensorData'));   
-
-      if(data != null) {
+      //var data = JSON.parse(sessionStorage.getItem('sensorData'));   
+      const response = await axios.get(`${url}/getSensorData?rideId=${this.props.rideData.rideId}`);
+      if(response.data !== null) {
+        var data = response.data.message[0];
       console.log(data);
       console.log(data.Throttle.filter(n=>n[0]));
       console.log(data.Throttle.filter(n=>n[1]));

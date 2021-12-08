@@ -17,8 +17,11 @@ export default class Direction extends React.Component {
        
     }
     componentDidMount = async () => {
-        var data = JSON.parse(sessionStorage.getItem('sensorData'));
-        if(data != null) {
+        //var data = JSON.parse(sessionStorage.getItem('sensorData'));
+        const response = await axios.get(`${url}/getSensorData?rideId=${this.props.rideData.rideId}`);
+     
+        if(response.data != null) {
+            var data = response.data.message[0];
         console.log(data);
         this.setState({ direction: data['Heading Direction'] });
         this.setState({ color: data['Heading Direction']=='W'?"red":data['Heading Direction']=='E'?"yellow":data['Heading Direction']=='S'?"green":data['Heading Direction']=='N'?'green':'orange' });
