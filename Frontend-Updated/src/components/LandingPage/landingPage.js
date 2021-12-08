@@ -21,7 +21,7 @@ class LandingPage extends Component {
         <div className='landing' style = {{marginTop: "-2%"}}>
           <Image
             className='landingpic'
-            src='/LandingPage_pic.png'
+            src='/LandingPage_Pic.png'
             alt='landing page'
           />
         </div>
