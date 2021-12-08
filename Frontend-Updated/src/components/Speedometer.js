@@ -3,6 +3,8 @@ import ReactSpeedometer from "react-d3-speedometer";
 import io from "socket.io-client";
 import axios from "axios";
 import URLs from "../URLs";
+
+import {url} from './Constants'
 import { Page, Grid, Card, colors } from "tabler-react";
 
 const styles = {
@@ -41,7 +43,13 @@ export default class Speedometer extends React.Component {
       var data = response.data.message[0];
     // console.log(data);
     // if(data != null) {
-    this.setState({ speed: data['Speed (km/h)'] });
+      try {
+    const speed = data === null || data.length === null ? 0 : data['Speed (km/h)'];
+    this.setState({ speed: speed });
+      }
+      catch(error) {
+        this.setState({ speed: 0 });
+      }
 
     console.log("fetch sensordata");
     const socket = io(URLs.socketURL+"/socket", {

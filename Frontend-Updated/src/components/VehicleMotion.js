@@ -2,7 +2,9 @@ import React from "react";
 import ReactSpeedometer from "react-d3-speedometer";
 import io from "socket.io-client";
 import axios from "axios";
+
 import URLs from "../URLs";
+import {url} from './Constants'
 import { Page, Grid, Card, colors } from "tabler-react";
 import ListGroup from 'react-bootstrap/ListGroup';
 
@@ -90,13 +92,30 @@ export default class VehicleMotion extends React.Component {
             {
               redLight=true;
               this.setState({redLight:true});
-              this.setState({redLightLoc:sensordata['Traffic Lights'][0]+','+sensordata['Traffic Lights'][1]+']'})
+              this.setState({redLightLoc:'['+sensordata['Traffic Lights'][0].toFixed(2)+','+sensordata['Traffic Lights'][1].toFixed(2)+']'})
               this.setState({ stopped: 'Red Light' });
             }else
             {
               this.setState({redLight:false});
               this.setState({ stopped: (stop.length>0 && brakeZero.length>0&&steerZero.length>0)||(sensordata['Hand Brake']==true)?'Yes':'No' });
-            }        
+            }
+            
+
+            // var redLight=false;
+            // if(sensordata['Traffic Lights'].length>0 && 
+            // (sensordata['Brake'][0]==0.5&& sensordata['Brake'][1]==0&&sensordata['Brake'][2]==1)
+            // &&(sensordata['Steer'][0]==0&&sensordata['Steer'][1]==-1&&sensordata['Steer'][2]==1)
+            // &&(sensordata['Throttle'][0]==0&&sensordata['Throttle'][1]==0&&sensordata['Throttle'][2]==1))
+            // {
+            //   redLight=true;
+            //   this.setState({redLight:true});
+            //   this.setState({redLightLoc:sensordata['Traffic Lights'][0]+','+sensordata['Traffic Lights'][1]+']'})
+            //   this.setState({ stopped: 'Red Light' });
+            // }else
+            // {
+            //   this.setState({redLight:false});
+            //   this.setState({ stopped: (stop.length>0 && brakeZero.length>0&&steerZero.length>0)||(sensordata['Hand Brake']==true)?'Yes':'No' });
+            // }        
             
             this.setState({ idle: stop.length>0?'Yes':'No' });
            // var rt=sensordata.Steer.filter(x=>x[0]>0||x[1]>0||x[2]>0);
@@ -139,6 +158,7 @@ export default class VehicleMotion extends React.Component {
                   </Grid.Col>
                   <Grid.Col>{this.state.stopped}</Grid.Col>                  
                 </Grid.Row>
+                {/* {this.state.redLight?<Grid.Row><Grid.Col></Grid.Col><Grid.Col>{this.state.redLightLoc}</Grid.Col></Grid.Row>:""} */}
                 {this.state.redLight?<Grid.Row><Grid.Col></Grid.Col><Grid.Col>{this.state.redLightLoc}</Grid.Col></Grid.Row>:""}
               </ListGroup.Item>
               <ListGroup.Item>

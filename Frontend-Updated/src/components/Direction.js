@@ -3,6 +3,7 @@ import ReactSpeedometer from "react-d3-speedometer";
 import io from "socket.io-client";
 import axios from "axios";
 import URLs from "../URLs";
+import {url} from './Constants'
 import { Page, Grid, Card, colors,ProgressCard } from "tabler-react";
 
 export default class Direction extends React.Component {
