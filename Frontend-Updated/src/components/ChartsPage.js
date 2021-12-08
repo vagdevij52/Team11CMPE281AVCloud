@@ -153,8 +153,8 @@ export default class ChartsPage extends React.Component {
 
   }
   componentDidMount = async () => {
-    this.fetchRouteInfo(this.state.rideData.rideId);
-    this.fetchRides(this.state.rideData.rideId);
+    this.fetchRouteInfo(this.props.rideData.rideId);
+    this.fetchRides(this.props.rideData.rideId);
     //socket.io connection
     // const socket = io(`http://localhost:3001/socket`);
 

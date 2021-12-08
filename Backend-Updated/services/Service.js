@@ -322,8 +322,7 @@ const getRideById = (rideId) => {
       }
     }
 
-
-
+   
 exports.login = login;
 exports.signup = signup;
 exports.registerVehicle = registerVehicle;

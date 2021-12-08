@@ -436,7 +436,25 @@ router.get('/getRoutes', function (req, res) {
         });      
   });
   
-    
+
+ router.get('/getRideStatus', function (req, res) {
+    const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+    //const uri = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
+    MongoClient.connect(uri, function (err, db) {
+      if (err) throw err;
+      var dbo = db.db("AVCLOUD");
+      //var dbo = db.db("cmpe281");
+      dbo.collection("Status").find({"Ride ID":parseInt(req.query.rideId)}).sort({ _id: -1 }).limit(1).toArray(function (err, result) {
+        if (err) throw err;
+        db.close();
+        return res.json({
+          success: true,
+          message: result
+        });     
+  
+      });
+    });
+     })
  
 
 

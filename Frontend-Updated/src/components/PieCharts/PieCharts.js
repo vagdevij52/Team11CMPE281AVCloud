@@ -98,7 +98,7 @@ class PieCharts extends Component {
   rootProps={{ 'data-testid': '2' }}
 />
 
-<Chart
+{/* <Chart
   width={'500px'}
   height={'300px'}
   style = {{marginLeft: "28%"}}
@@ -106,7 +106,7 @@ class PieCharts extends Component {
   loader={<div>Loading Chart</div>}
   data={[
     ['Task', 'Autonomous Vehicle State'],
-    ['Active', 1],
+    ['Active', ],
     ['Inactive', 6],
     ['Not Working', 0],
     
@@ -117,7 +117,7 @@ class PieCharts extends Component {
     is3D: true,
   }}
   rootProps={{ 'data-testid': '2' }}
-/>
+/> */}
 
 <Chart
   width={'500px'}

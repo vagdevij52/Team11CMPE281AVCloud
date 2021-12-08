@@ -31,8 +31,8 @@ export default class AdminTrackingDashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      //rideId: this.props.rideData   
-      rideId: 86
+      rideId: this.props.rideData   
+     // rideId: 86
     }
     console.log(this.state)
   }

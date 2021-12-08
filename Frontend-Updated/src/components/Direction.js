@@ -3,6 +3,7 @@ import ReactSpeedometer from "react-d3-speedometer";
 import io from "socket.io-client";
 import axios from "axios";
 import URLs from "../URLs";
+import {url} from './Constants'
 import { Page, Grid, Card, colors,ProgressCard } from "tabler-react";
 
 export default class Direction extends React.Component {
@@ -17,8 +18,11 @@ export default class Direction extends React.Component {
        
     }
     componentDidMount = async () => {
-        var data = JSON.parse(sessionStorage.getItem('sensorData'));
-        if(data != null) {
+        //var data = JSON.parse(sessionStorage.getItem('sensorData'));
+        const response = await axios.get(`${url}/getSensorData?rideId=${this.props.rideData.rideId}`);
+        try{     
+        if(response.data != null) {
+            var data = response.data.message[0];
         console.log(data);
         this.setState({ direction: data['Heading Direction'] });
         this.setState({ color: data['Heading Direction']=='W'?"red":data['Heading Direction']=='E'?"yellow":data['Heading Direction']=='S'?"green":data['Heading Direction']=='N'?'green':'orange' });
@@ -37,7 +41,9 @@ export default class Direction extends React.Component {
             this.setState({ width: 100});
             console.log(this.state.sensorData);
         });
+	}
     }
+	catch(err)  {console.log("error in direction", err)};
     };
 
     render() {

@@ -22,7 +22,7 @@ export default class SensorData extends React.Component {
       try {
         console.log("fetch sensordata");
         var rideId = this.props.rideData.rideId;
-        //var rideId=86;
+       // var rideId=86;
         const response = await axios.get(`${url}/getSensorData?rideId=${rideId}`);
 
         //var data = sessionStorage.getItem('sensorData');
@@ -75,7 +75,8 @@ export default class SensorData extends React.Component {
   }
   
   componentDidMount = async () => {
-    this.getRideData();
+    try{
+	    this.getRideData();
     const socket = io(URLs.socketURL+"/socket", {
       transports: ['websocket']
     });
@@ -92,6 +93,8 @@ export default class SensorData extends React.Component {
       console.log(this.state.sensorData);
     });
     await this.fetchSensorData(this.state.rideData.rideId);
+    }
+	  catch (err){(console.log("Error getting Charts", err ))}
   };
 
   render() {
