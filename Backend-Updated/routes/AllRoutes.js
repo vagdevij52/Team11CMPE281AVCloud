@@ -376,7 +376,7 @@ router.get('/login', function (req, res) {
  // exports.getSensorData = async (req, res, next) => {
     var rideId = req.query.rideId;
     //const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
-    const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+    const uri="mongodb+srv://root:root1234@cluster1.ssmqr.mongodb.net/sensordata?retryWrites=true&w=majority";
 
     //const uri = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
     MongoClient.connect(uri, function (err, db) {
@@ -438,7 +438,7 @@ router.get('/getRoutes', function (req, res) {
   
 
  router.get('/getRideStatus', function (req, res) {
-    const uri="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+    const uri="mongodb+srv://root:root1234@cluster1.ssmqr.mongodb.net/sensordata?retryWrites=true&w=majority";
     //const uri = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";
     MongoClient.connect(uri, function (err, db) {
       if (err) throw err;

@@ -13,7 +13,7 @@ const multer = require('multer');
 const socketIO = require("socket.io");
 const http = require("http");
 app.set('view engine', 'ejs');
-app.use(cors({ origin: 'http://3.133.152.135:3000', credentials: true }));
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 //app.use(cors({ origin: 'http://localhost:3000'}));
 
 //app.use(cors());
@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 require('./routes/index')(app);
 
 app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://3.133.152.135:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
@@ -42,7 +42,7 @@ app.use(function(req, res, next) {
   const server = require("http").createServer(app);
   const io = require("socket.io")(server, {
     cors: {
-      origin: "http://3.134.116.221:3000",
+      origin: "http://localhost:3000",
       methods: ["GET", "POST"],
       transports: ['websocket']
     }
@@ -62,7 +62,7 @@ app.use(function(req, res, next) {
   // io.on("connect_error", (err) => {
   //   console.log(`connect_error due to ${err.message}`);
   // });
-  const URI="mongodb+srv://lakshmi:lakshmi@avcloud.v0hfj.mongodb.net/AVCLOUD?retryWrites=true&w=majority";
+  const URI="mongodb+srv://root:root1234@cluster1.ssmqr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 //  var URI = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?authSource=admin&replicaSet=atlas-8rtgw9-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true";
   //URI = "mongodb+srv://admin:lakshmi@cmpe281.yagcm.mongodb.net/cmpe281?retryWrites=true&w=majority";

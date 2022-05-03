@@ -7,6 +7,7 @@ const spawn = require("child_process").spawn;
 
 
 const login = (email, password) => {
+    console.log("In service.js login API");
     return new Promise((resolve, reject) => {
         var parameters = [];
        
@@ -25,6 +26,7 @@ const login = (email, password) => {
 }
 
 const signup = (firstName, lastName, email, password, userrole) => {
+    console.log('Inside signup - Service.js');
     return new Promise((resolve, reject) => {
         var parameters = [];
        
@@ -34,8 +36,10 @@ const signup = (firstName, lastName, email, password, userrole) => {
         parameters.push({ name: 'Email', type: TYPES.NVarChar, val: email });
         parameters.push({ name: 'UserPassword', type: TYPES.NVarChar, val: password });
 
+        //const query = 'Insert into cmpe281.user_details(userid ,email, isadmin, name, userpassword) values(@email,@isadmin,@name, @userpassword);';
         const query = 'Insert into dbo.USERDETAILS(FirstName, LastName, UserRole, Email, UserPassword) values(@FirstName,@LastName,@UserRole, @Email, @UserPassword);select @@identity as UserID;';
-    
+        console.log(query);
+        console.log('calling database');
         dbConnection.getQuery(query, parameters, false, function (error, data) {           
             if (data) {
                 resolve({ msg: 'successfully inserted', data });
@@ -64,7 +68,7 @@ const registerVehicle = (carNo, carType, carModel, carColor, userId) => {
 
 
 
-        const query = 'INSERT INTO dbo.VEHICLEDETAILS(VehcileNum,VehcileModel,VehcileColor,VehcileScheduleStatus,VehcileStatus,VehcileApprovalStatus,VehicleOwnerID, VehicleType, VehcileSeatingCapacity, VehcileDistanceDriven) values(@VehicleNum,@VehicleModel,@VehicleColor,@VehicleScheduleStatus,@VehicleStatus,@VehicleApprovalStatus,@VehicleOwnerID,@VehicleType,@VehicleSeatingCapacity,@VehicleDistanceDriven);select @@identity as VehicleID;';
+        const query = 'INSERT INTO dbo.VEHICLEDETAILS(VehicleNum,VehicleModel,VehicleColor,VehicleScheduleStatus,VehicleStatus,VehicleApprovalStatus,VehicleOwnerID, VehicleType, VehicleSeatingCapacity, VehicleDistanceDriven) values(@VehicleNum,@VehicleModel,@VehicleColor,@VehicleScheduleStatus,@VehicleStatus,@VehicleApprovalStatus,@VehicleOwnerID,@VehicleType,@VehicleSeatingCapacity,@VehicleDistanceDriven);select @@identity as VehicleID;';
     
         dbConnection.getQuery(query, parameters, false, function (error, data) {           
             if (data) {
@@ -149,16 +153,16 @@ const bookRide = (userId, vehicleId, source, destination, fare) => {
 
         var parameters = [];
        
-        parameters.push({ name: 'VehcileID', type: TYPES.Int, val: vehicleId });
-        parameters.push({ name: 'VehcileScheduleStatus', type: TYPES.NVarChar, val: 'booked' });
+        parameters.push({ name: 'VehicleID', type: TYPES.Int, val: vehicleId });
+        parameters.push({ name: 'VehicleScheduleStatus', type: TYPES.NVarChar, val: 'booked' });
 
-        const query = 'Update dbo.VEHICLEDETAILS set VehcileScheduleStatus = @VehcileScheduleStatus where VehcileID = @VehcileID;';
+        const query = 'Update dbo.VEHICLEDETAILS set VehicleScheduleStatus = @VehicleScheduleStatus where VehicleID = @VehicleID;';
     
         dbConnection.getQuery(query, parameters, false, function (error, data) {           
             if (data) {
                 var parameters1 = [];       
                 parameters1.push({ name: 'UserID', type: TYPES.Int, val: userId });
-                parameters1.push({ name: 'VehcileID', type: TYPES.Int, val: vehicleId });
+                parameters1.push({ name: 'VehicleID', type: TYPES.Int, val: vehicleId });
                 parameters1.push({ name: 'RideStartTime', type: TYPES.DateTime, val: new Date() });
                 parameters1.push({ name: 'RideEndTime', type: TYPES.DateTime, val: new Date() });
                 parameters1.push({ name: 'RideOrigin', type: TYPES.NVarChar, val: source });
@@ -167,7 +171,7 @@ const bookRide = (userId, vehicleId, source, destination, fare) => {
                 parameters1.push({ name: 'RideAmount', type: TYPES.Float, val: fare});
                 parameters1.push({ name: 'RideStatus', type: TYPES.NVarChar, val: 'booked' });
 
-                const query = 'Insert into VEHICLERIDEDETAILS(RideStartTime, RideEndTime, RideVehicleID, RideOrigin, RideDestination, RideCustomerID, RideDistance, RideAmount, RideStatus) values(@RideStartTime, @RideEndTime, @VehcileID, @RideOrigin, @RideDestination, @UserID, @RideDistance, @RideAmount, @RideStatus);select @@identity as rideId;'
+                const query = 'Insert into VEHICLERIDEDETAILS(RideStartTime, RideEndTime, RideVehicleID, RideOrigin, RideDestination, RideCustomerID, RideDistance, RideAmount, RideStatus) values(@RideStartTime, @RideEndTime, @VehicleID, @RideOrigin, @RideDestination, @UserID, @RideDistance, @RideAmount, @RideStatus);select @@identity as RideID;'
     
                 dbConnection.getQuery(query, parameters1, false, function (error, data) {           
                     if (data) {                        
@@ -224,7 +228,7 @@ const saveUserDetails = (userId, firstName, lastName, birthday, gender, phone) =
         parameters.push({ name: 'UserID', type: TYPES.Int, val: userId });
         parameters.push({ name: 'FirstName', type: TYPES.NVarChar, val: firstName });
         parameters.push({ name: 'LastName', type: TYPES.NVarChar, val: lastName });
-        parameters.push({ name: 'Birthday', type: TYPES.DateTime, val: new Date() });
+        parameters.push({ name: 'Birthday', type: TYPES.Date, val: birthday });
         parameters.push({ name: 'Gender', type: TYPES.NVarChar, val: gender });
         parameters.push({ name: 'UserPhone', type: TYPES.NVarChar, val: phone });
 
@@ -248,7 +252,7 @@ const repairVehicle = (vehicleId) => {
       parameters.push({ name: 'VehicleId', type: TYPES.Int, val: vehicleId });
       parameters.push({ name: 'Status', type: TYPES.NVarChar, val: 'Repair' });
 
-      const query = 'update dbo.VEHICLEDETAILS set VehcileStatus = @Status where VehcileID = @VehicleId;';
+      const query = 'update dbo.VEHICLEDETAILS set VehcileStatus = @Status where VehicleId = @VehicleId;';
   
       dbConnection.getQuery(query, parameters, false, function (error, data) {           
           if (data) {                                     
@@ -284,7 +288,7 @@ const getRideById = (rideId) => {
     var parameters = [];
     // parameters.push({ name: 'UserID', type: TYPES.Int, val: ownerId });
     // parameters.push({ name: 'RideID', type: TYPES.Int, val: rideId });
-    var query = "SELECT vd.*,vrd.*,c.* FROM AVCLOUD.dbo.VEHICLERIDEDETAILS vrd JOIN AVCLOUD.dbo.VEHICLEDETAILS vd on vd.VehcileID=vrd.RideVehicleID JOIN AVCLOUD.dbo.USERDETAILS c on vrd.RideCustomerID=c.UserID WHERE vrd.RideID= " + rideId + ";";
+    var query = "SELECT vd.*,vrd.*,c.* FROM AVCLOUD.dbo.VEHICLERIDEDETAILS vrd JOIN AVCLOUD.dbo.VEHICLEDETAILS vd on vd.VehicleId=vrd.RideVehicleID JOIN AVCLOUD.dbo.USERDETAILS c on vrd.RideCustomerID=c.UserID WHERE vrd.RideID= " + rideId + ";";
     dbConnection.query(query, parameters, false, function (error, data) {
       if (error) {
         console.log(error);
@@ -301,7 +305,7 @@ const getRideById = (rideId) => {
   const getAllRidesSensor = () => {
     return new Promise((resolve, reject) => {
       var parameters = [];            
-      var sql = "SELECT top 10 vrd.*,vd.*,c.* FROM AVCLOUD.dbo.VEHICLERIDEDETAILS vrd JOIN AVCLOUD.dbo.VEHICLEDETAILS vd on vd.VehcileID=vrd.RideVehicleID JOIN AVCLOUD.dbo.USERDETAILS c on vrd.RideCustomerID=c.UserID WHERE RideStatus IS NOT NULL ORDER BY 1 DESC;";
+      var sql = "SELECT top 10 vrd.*,vd.*,c.* FROM AVCLOUD.dbo.VEHICLERIDEDETAILS vrd JOIN AVCLOUD.dbo.VEHICLEDETAILS vd on vd.VehicleID=vrd.RideVehicleID JOIN AVCLOUD.dbo.USERDETAILS c on vrd.RideCustomerID=c.UserID WHERE RideStatus IS NOT NULL ORDER BY 1 DESC;";
       dbConnection.getQuery(sql, parameters, true, function (error, data) {
           if (data) {
               resolve(data);

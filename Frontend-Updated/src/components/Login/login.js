@@ -80,7 +80,7 @@ class Login extends Component {
       .get(url + '/login?email=' + data.email + '&password=' + data.password)
       .then((response) => {
         console.log('Status Code : ', response.status);
-        console.log('response ', response.data);
+        console.log('response ', response.data[0]);
         if (response.status === 200) {
           if(response.data == false)
           {

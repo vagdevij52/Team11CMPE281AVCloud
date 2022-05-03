@@ -23,19 +23,26 @@ class HomePageUser extends Component {
     .then((response) => {
         console.log('Status Code : ', response.status);
         console.log('response ', response.data);
-           
+        console.log('car type ', carType);   
         if(response.data != false)
         {
           var vehicleIndex = -1;
            for(var i = 0; i < response.data.length; i++)
            {
-             if(response.data[i].VehcileApprovalStatus === 'approved' && response.data[i].VehcileStatus === 'active' && response.data[i].VehcileScheduleStatus === 'idle' && response.data[i].VehicleType.toLowerCase() === carType.toLowerCase())             
+             console.log('response.data[i].VehicleApprovalStatus ', response.data[i].VehicleApprovalStatus);
+             console.log('response.data[i].VehicleStatus ', response.data[i].VehicleStatus);
+             console.log('response.data[i].VehicleScheduleStatus ', response.data[i].VehicleScheduleStatus);
+             console.log('response.data[i].VehicleType.toLowerCase() ', response.data[i].VehicleType.toLowerCase());
+             console.log('carType.toLowerCase() ', carType.toLowerCase());
+             console.log('car type ', response.data[i].VehicleType.toLowerCase() === carType.toLowerCase());
+             if(response.data[i].VehicleApprovalStatus === 'approved' && response.data[i].VehicleStatus === 'active' && response.data[i].VehicleScheduleStatus === 'idle' && response.data[i].VehicleType.toLowerCase() === carType.toLowerCase())             
              {
+                console.log("in if block");
                 vehicleIndex = i;
                 break;
              }
            }
-
+           console.log('vehicleIndex ', vehicleIndex);
            if(vehicleIndex == -1)
            {
              alert("All vehicles of the selected type are busy. Please try again after sometime.");
@@ -58,14 +65,14 @@ class HomePageUser extends Component {
 
            const data = {
              userId : sessionStorage.getItem('userid'),
-              vehicleId : response.data[i].VehcileID,
+              vehicleId : response.data[i].VehicleID,
               source : source,
               destination : destination,
               fare : this.state.fare
            }
 
-           const carModel = response.data[i].VehcileModel;
-           const carNumber = response.data[i].VehcileNum;
+           const carModel = response.data[i].VehicleModel;
+           const carNumber = response.data[i].VehicleNum;
 
            axios
           .post(url + '/bookRide', data)
